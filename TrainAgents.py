@@ -250,7 +250,7 @@ def main():
     # run_file = "cbdreamer_multiagent_classic2"
     # run_file = "cobdreamer_multiagent_nonstationary"
 
-    run_file = "dreamerv3_singleagent"
+    run_file = "dreamerv3_multiagent_classic_mco"
     sim = TrainSimulation(run_file)
     sim.run_training_evaluation()
 

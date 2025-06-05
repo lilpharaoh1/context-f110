@@ -311,7 +311,9 @@ class PurePursuit:
 
         print("ma_info :", ma_info)
 
-        self.lookahead = conf.lookahead * (1 + 0.4*self.la_c)
+        # self.lookahead = conf.lookahead * (1 + 0.4*self.la_c) # esp 
+        self.lookahead = conf.lookahead * (1 + 0.4*self.la_c) # gbr 
+        # self.lookahead = conf.lookahead * (1 + 0.3*self.la_c) # mco
         self.v_min_plan = conf.v_min_plan
         self.wheelbase =  conf.l_f + conf.l_r
         self.max_steer = conf.max_steer

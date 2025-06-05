@@ -27,7 +27,7 @@ from TrajectoryAidedLearning.DataTools.plotting_utils import *
 # SAVE_PDF = False
 SAVE_PDF = True
 
-RUN_FOLDER = 9
+RUN_FOLDER = 3
 
 CMAP_SIZE = {
     "f1_esp" : 0.35,
@@ -36,7 +36,7 @@ CMAP_SIZE = {
     "f1_mco" : 0.4
 }
 
-colors = ['royalblue', 'mediumseagreen', 'coral']
+colors = ['coral', 'mediumseagreen', 'royalblue']
 
 
 def ensure_path_exists(folder):
@@ -153,7 +153,7 @@ class AnalyseTestLapData:
         self.path = run_folder[0]
         best_lap = 0
         longest = 0
-        for lap_n in range(1):
+        for lap_n in range(50):
             data = np.load(self.path + f"agent_1/Lap_{lap_n}_history_{self.vehicle_name}_{self.map_name}.npy")
             if data.shape[0] > longest:
                 best_lap = lap_n

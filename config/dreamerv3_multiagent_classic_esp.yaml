@@ -1,7 +1,7 @@
-test_name: "dreamerv3_multiagent_stationary"
+test_name: "dreamerv3_multiagent_classic_esp"
 
-# num_agents: 4
-# target_position: 4
+# num_agents: 2
+# target_position: 2
 
 architecture: "DreamerV3"
 window_in: 2
@@ -9,11 +9,12 @@ window_out: 1
 
 map_mode: "Std"
 
-n: 3
+start_n: 0
+n: 5
 set_n: 1
 
 random_seed: 10000
-noise_std: 0.0
+noise_std: 0.0 
 
 start_train_steps: 0
 n_train_steps: 100000
@@ -26,7 +27,7 @@ max_speed: 6
 
 lr: 0.00003
 gamma: 0.85
-ma_info: [0.0, 0.0, 0.0, 0.0]
+ma_info: [0.15, 0.15, 0.3, 0.3]
 
 runs:
   - adversaries: ['PP']

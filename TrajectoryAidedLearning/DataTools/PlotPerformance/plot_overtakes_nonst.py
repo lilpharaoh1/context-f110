@@ -85,7 +85,8 @@ class AnalyseTestLapData:
     def find_succ(self, folder):
         indv_succ = np.zeros((7, 7))
         for i in range(0, 49):
-            yaml_path = f"{folder}TestRunConfig_{i}_record.yaml"
+            yaml_path = f"{folder}RunConfig_{i}_record.yaml"
+            print("yaml_path:", yaml_path)
             with open(yaml_path) as file:
                 run_config = yaml.safe_load(file)
                 indv_succ[i // 7, i % 7] = run_config['avg_overtakes']

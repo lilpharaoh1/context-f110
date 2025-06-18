@@ -31,8 +31,8 @@ import cv2
 
 # settings
 SHOW_TRAIN = False
-# SHOW_TEST = False
-SHOW_TEST = True
+SHOW_TEST = False
+# SHOW_TEST = True
 VERBOSE = True
 LOGGING = True
 GRID_X_COEFF = 2.0
@@ -166,8 +166,8 @@ class TestSimulation():
             ma_runlist = np.stack([speed_grid.ravel(), la_grid.ravel()], axis=1)
 
         for ma_idx, ma_info in enumerate(ma_runlist):
-            # if ma_idx != 42:
-            #     continue
+            if ma_idx < 17:
+                continue
             print(f"Architecture {run.architecture} / Num_Agents {run.num_agents} / Adversary {run.adversaries[0]} / Set_n {run.n} / RunConfig {ma_idx} ")
             self.adv_planners = [select_agent(run, self.conf, architecture, train=False, init=False, ma_info=ma_info) for architecture in run.adversaries]
             self.vehicle_state_history = [VehicleStateHistory(run, f"Testing/Testing_{ma_idx}/agent_{agent_id}") for agent_id in range(self.num_agents)]
@@ -196,8 +196,8 @@ class TestSimulation():
                 # fig, ax = plt.subplots()
                 while not target_obs['colision_done'] and not target_obs['lap_done'] and not target_obs['current_laptime'] > self.conf.max_laptime:
                     self.prev_obs = observations
-                    # target_action, extra = self.target_planner.plan(observations[0], context=context)
-                    target_action, extra = np.array([0.0, 0.0]), None
+                    target_action, extra = self.target_planner.plan(observations[0], context=context)
+                    # target_action, extra = np.array([0.0, 0.0]), None
                     if run.architecture == "cbDreamer":
                         self.vehicle_state_history[0].add_mask(extra)
 
@@ -457,8 +457,15 @@ class TestSimulation():
 
         for agent_id in range(self.num_agents):
             observations[agent_id]['overtaking'] = self.prev_obs[agent_id]['position'] - observations[agent_id]['position'] \
-                                                        if not self.prev_obs is None else 0
+                                                        if not self.prev_obs is None \
+                                                        and self.prev_obs[0]['current_laptime'] > 0.01 \
+                                                        else 0
             observations[agent_id]['reward'] += observations[agent_id]['overtaking']
+
+
+        # if observations[0]['overtaking'] != 0:
+        #     print(self.prev_obs[0]['current_laptime'], self.prev_obs[0]['progress'], observations[0]['current_laptime'], observations[0]['progress'], observations[0]['overtaking'])
+        #     print(self.prev_obs[1]['current_laptime'], self.prev_obs[1]['progress'], observations[1]['current_laptime'], observations[1]['progress'], observations[1]['overtaking'])
 
 
         # if self.vehicle_state_history:
@@ -468,7 +475,7 @@ class TestSimulation():
         return observations
 
     def score_positions(self, observations):
-        scores = self.std_track.s
+        scores = [observations[agent_idx]['progress'] for agent_idx in range(self.num_agents)] #  self.std_track.s
         sorted_scores = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)
 
         for rank, agent_id in enumerate(sorted_scores):
@@ -478,8 +485,8 @@ class TestSimulation():
 
     def calc_offsets(self, num_adv):
 
-        # x_offset = np.arange(1, num_adv+1) * 5.5 # esp
-        x_offset = np.arange(1, num_adv+1) * 4.0 # gbr
+        x_offset = np.arange(1, num_adv+1) * 5.5 # esp
+        # x_offset = np.arange(1, num_adv+1) * 4.0 # gbr
         # x_offset = np.arange(1, num_adv+1) * 3.0 # mco
         y_offset = np.zeros(num_adv)
         # y_offset[::2] = np.ones(ceil(num_adv/2)) * 0.6
@@ -568,7 +575,7 @@ def main():
     # sim.run_testing_evaluation()
 
 
-    run_file = "dreamerv3_multiagent_classic_gbr"
+    run_file = "dreamerv3_multiagent_classic_esp"
     sim = TestSimulation(run_file)
     sim.run_testing_evaluation()
 

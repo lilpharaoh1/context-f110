@@ -125,6 +125,7 @@ class TrainSimulation(TestSimulation):
             self.completed_laps = 0
             self.places = []
             self.progresses = []
+            self.start_poses = "ordered" # start poses should be ordered for testing
 
             self.run_testing(run)
 

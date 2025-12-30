@@ -39,7 +39,7 @@ class cbDreamerTrainer:
         self.train = self.agent.train # alias for sss
         # self.save = self.agent.save # alias for sss
 
-    def plan(self, obs, context=None, add_mem_entry=True):
+    def plan(self, obs, context=None, add_mem_entry=True, **kwargs):
         self.nn_context = np.array(context) if context else np.zeros((1, 2))
         nn_state = self.transform.transform_obs(obs)
         if add_mem_entry:
@@ -167,7 +167,7 @@ class cbDreamerTester:
 
         print(f"Agent loaded: {run.run_name}")
 
-    def plan(self, obs, context=None):
+    def plan(self, obs, context=None, **kwargs):
         self.nn_context = np.array(context) if not context is None else np.zeros((1, 2))
         if obs['state'][3] < self.v_min_plan:
             self.action = np.array([0, 7])

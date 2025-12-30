@@ -23,8 +23,8 @@ from TrajectoryAidedLearning.Utils.HistoryStructs import VehicleStateHistory
 from TrajectoryAidedLearning.TestSimulation import TestSimulation
 
 # settings
-SHOW_TRAIN = False
-# SHOW_TRAIN = True
+# SHOW_TRAIN = False
+SHOW_TRAIN = True
 VERBOSE = True
 
 NON_TRAINABLE = []
@@ -250,7 +250,7 @@ def main():
     # run_file = "cbdreamer_multiagent_classic2"
     # run_file = "cobdreamer_multiagent_nonstationary"
 
-    run_file = "sac_multiagent_classic_mco"
+    run_file = "dev"
     sim = TrainSimulation(run_file)
     sim.run_training_evaluation()
 

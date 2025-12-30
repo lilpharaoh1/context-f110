@@ -33,7 +33,7 @@ class DreamerV2Trainer:
         self.train = self.agent.train # alias for sss
         # self.save = self.agent.save # alias for sss
 
-    def plan(self, obs, add_mem_entry=True):
+    def plan(self, obs, add_mem_entry=True, **kwargs):
         nn_state = self.transform.transform_obs(obs)
         if add_mem_entry:
             self.add_memory_entry(obs)
@@ -128,7 +128,7 @@ class DreamerV2Tester:
 
         print(f"Agent loaded: {run.run_name}")
 
-    def plan(self, obs):
+    def plan(self, obs, **kwargs):
         if obs['state'][3] < self.v_min_plan:
             self.action = np.array([0, 7])
             return self.action

@@ -148,10 +148,14 @@ def setup_run_list(run_file):
             set_n = run['set_n']
             max_speed = run['max_speed']
             run["n"] = rep
+            run["start_train_steps"] = run["start_train_steps"] if "start_train_steps" in run else 0
+
+            # Handcrafted Agents
             if run['architecture'] == "PP":
                 run['run_name'] = f"{run['architecture']}_PP_{run['map_mode']}_PP_{run['map_name']}_{max_speed}_{set_n}_{rep}"
             elif run['architecture'] == "DispExt":
                 run['run_name'] = f"{run['architecture']}_DispExt_{run['map_mode']}_DispExt_{run['map_name']}_{max_speed}_{set_n}_{rep}"
+            # RL Agents
             else:
                 run['run_name'] = f"{run['architecture']}_{str_adv(adversaries)}_{str_ma(run['ma_info'])}_{run['map_mode']}_{run['reward']}_{run['map_name']}_{max_speed}_{int(run['lr'] * 1e4)}_{int(run['gamma'] * 1e3)}_{rep}"
             run['path'] = f"{run['test_name']}/"

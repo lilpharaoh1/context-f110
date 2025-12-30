@@ -187,7 +187,6 @@ class Trajectory:
                 track.append(lines)
 
         track = np.array(track)
-        print(f"Track Loaded: {filename}")
 
         # these get expanded
         self.waypoints = track[:, 1:3]
@@ -309,7 +308,7 @@ class PurePursuit:
         self.trajectory = Trajectory(run.map_name, self.raceline)
         self.speed_c, self.la_c = ma_info
 
-        print("ma_info :", ma_info)
+        print("Agent context loaded:", ma_info)
        
         if run.map_name == "f1_esp":
             self.lookahead = conf.lookahead * (1 + 0.4*self.la_c) # esp 

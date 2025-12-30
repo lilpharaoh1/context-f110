@@ -135,36 +135,36 @@ data_stds = np.array([
                [0.1578, 0.7820, 0.1311, 7.5101, 0.0910],
                [0.1098, 0.7228, 0.3953, 8.9981, 0.0135]],
              ])
-ylims = [[0, None], [0, None], [0, None], [0, None], [1, 4]]
+ylims = [[0, None], [0, None], [0, None], [0, 50], [1, 4]]
 
 data_means = np.transpose(data_means, (0, 2, 1))
 data_stds = np.transpose(data_stds, (0, 2, 1))
 
 
-fig, axs = plt.subplots(1, 5, figsize=(18, 8), sharex=True)
+fig, axs = plt.subplots(1, 4, figsize=(10, 3), sharex=True)
 fig.subplots_adjust(hspace=0.3, wspace=0.3)
 
-for col in range(5):
+for col in range(4):
     ax = axs[col]
     
     means = np.concatenate([data_means[0, col], data_means[1, col]])
-    stds = np.concatenate([data_stds[0, col], data_stds[1, col]])
-    
+    stds = np.concatenate([data_stds[0, col], data_stds[1, col]])  
 
     means = np.empty(len(data_means[0, col]) * 2)
     means[0::2] = data_means[0, col]; means[1::2] = data_means[1, col]
     stds = np.empty(len(data_stds[0, col]) * 2)
     stds[0::2] = data_stds[0, col]; stds[1::2] = data_stds[1, col]
 
-
+    
+    bar_width=0.4
     offsets = np.empty(len(means))
     offsets[0::2] = range(len(data_means[0, col]))
     offsets[1::2] = range(len(data_means[0, col]))
-    offsets += np.array([-1, 1, -1, 1, -1, 1, -1, 1]) * 0.2
+    offsets += np.array([-1, 1, -1, 1, -1, 1, -1, 1]) * 0.5 * bar_width
     ax.bar(
         offsets,
         means,
-        width=0.4,
+        width=bar_width,
         yerr=stds, 
         capsize=5,
         color=colors, 
@@ -179,13 +179,13 @@ for col in range(5):
     
     ax.set_xticks([])
     ax.set_xticklabels([])
-    ax.set_title(names[col])
+    ax.set_title(names[col])#, fontsize=5)
 
 labels = ["SAC (ID)", "SAC (OOD)", "DreamerV3 (ID)", "DreamerV3 (OOD)", "cRSSM (ID)", "cRSSM (OOD)", "cMask (ID)", "cMask (OOD)"]
 handles = [mpatches.Patch(facecolor='gray', edgecolor='black', hatch=''), mpatches.Patch(facecolor='gray', edgecolor='black', hatch='///'),
         mpatches.Patch(facecolor='red', edgecolor='black', hatch=''), mpatches.Patch(facecolor='red', edgecolor='black', hatch='///'),
         mpatches.Patch(facecolor='blue', edgecolor='black', hatch=''), mpatches.Patch(facecolor='blue', edgecolor='black', hatch='///'),
         mpatches.Patch(facecolor='green', edgecolor='black', hatch=''), mpatches.Patch(facecolor='green', edgecolor='black', hatch='///'),]
-plt.legend(handles, labels, loc='lower right', fontsize=15)
+plt.legend(handles, labels, loc='lower right', fontsize=7)
 
-std_img_saving("Data/Vehicles/dispext_222_barplot", grid=False)
+std_img_saving("Data/Vehicles/paper_barplot", grid=False)

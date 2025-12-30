@@ -43,13 +43,13 @@ class AnalyseTestLapData:
                     self.plot_succ_mat(indv_succ, save_path=f'{folder}overtakes_{idx}')
                 except:
                     print(f"NOTE -> not counting folder {folder}")
-            self.plot_succ_mat(np.mean(run_succ, axis=0).reshape(1, 7, 7), save_path=f'{run_names[run_num]}overtakes')
+            self.plot_succ_mat(np.nanmean(run_succ, axis=0).reshape(1, 7, 7), save_path=f'{run_names[run_num]}overtakes')
             iid = np.mean(run_succ, axis=0).reshape(1, 7, 7)[in_dist]
             ood = np.mean(run_succ, axis=0).reshape(1, 7, 7)[~in_dist]
 
-            print(f"In-distribution: {np.mean(iid)} +- {np.std(iid)}")
-            print(f"Out-of-distribution: {np.mean(ood)} +- {np.std(ood)}")
-
+            print(f"In-distribution: {np.nanmean(iid)} +- {np.nanstd(iid)} ({np.nanmean(iid) / np.nanstd(iid)})")
+            print(f"Out-of-distribution: {np.nanmean(ood)} +- {np.nanstd(ood)} ({np.nanmean(ood) / np.nanstd(ood)})")
+            print(f"CVs: {np.nanmean(run_succ) / np.nanstd(run_succ)}")
 
     def plot_succ_mat(self, data, save_path=None):
         # Reshape data
@@ -85,7 +85,7 @@ class AnalyseTestLapData:
     def find_succ(self, folder):
         indv_succ = np.zeros((7, 7))
         for i in range(0, 49):
-            yaml_path = f"{folder}TestRunConfig_{i}_record.yaml"
+            yaml_path = f"{folder}RunConfig_{i}_record.yaml"
             with open(yaml_path) as file:
                 run_config = yaml.safe_load(file)
                 indv_succ[i // 7, i % 7] = run_config['avg_overtakes']

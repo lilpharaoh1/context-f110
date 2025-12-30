@@ -310,8 +310,15 @@ class PurePursuit:
         self.speed_c, self.la_c = ma_info
 
         print("ma_info :", ma_info)
-
-        self.lookahead = conf.lookahead * (1 + 0.4*self.la_c)
+       
+        if run.map_name == "f1_esp":
+            self.lookahead = conf.lookahead * (1 + 0.4*self.la_c) # esp 
+        elif run.map_name == "f1_gbr":
+            self.lookahead = conf.lookahead * (1 + 0.4*self.la_c) # gbr 
+        elif run.map_name == "f1_mco":
+            self.lookahead = conf.lookahead * (1 + 0.3*self.la_c) # mco
+        else:
+            raise "map_name not known..."
         self.v_min_plan = conf.v_min_plan
         self.wheelbase =  conf.l_f + conf.l_r
         self.max_steer = conf.max_steer

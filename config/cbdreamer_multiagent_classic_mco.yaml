@@ -1,16 +1,16 @@
-test_name: "cfdreamer_multiagent_nonstationary"
+test_name: "cbdreamer_multiagent_classic_mco"
 
 # num_agents: 1
 # target_position: 1
 
-architecture: "cfDreamer"
+architecture: "cbDreamer"
 window_in: 2
 window_out: 1
 
 map_mode: "Std"
 
 start_n: 0
-n: 3
+n: 5
 set_n: 1
 
 random_seed: 10000
@@ -20,7 +20,7 @@ start_train_steps: 0
 n_train_steps: 100000
 n_test_laps: 50
 
-map_name: "f1_esp"
+map_name: "f1_mco"
 reward: "Cth"
 
 max_speed: 6
@@ -33,9 +33,9 @@ runs:
   - adversaries: ['PP']
     num_agents: 2
     target_position: 2
-  # - adversaries: ['PP', 'PP', 'PP']
-  #   num_agents: 4
-  #   target_position: 4
+  - adversaries: ['PP', 'PP', 'PP']
+    num_agents: 4
+    target_position: 4
 
 
 

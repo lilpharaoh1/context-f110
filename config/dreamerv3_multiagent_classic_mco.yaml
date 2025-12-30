@@ -1,4 +1,4 @@
-test_name: "dreamerv3_multiagent_classic"
+test_name: "dreamerv3_multiagent_classic_mco"
 
 # num_agents: 2
 # target_position: 2
@@ -18,9 +18,9 @@ noise_std: 0.0
 
 start_train_steps: 0
 n_train_steps: 100000
-n_test_laps: 1
+n_test_laps: 50
 
-map_name: "f1_esp"
+map_name: "f1_mco"
 reward: "Cth"
 
 max_speed: 6
@@ -33,6 +33,6 @@ runs:
   - adversaries: ['PP']
     num_agents: 2
     target_position: 2
-  # - adversaries: ['PP', 'PP', 'PP']
-  #   num_agents: 4
-  #   target_position: 4
+  - adversaries: ['PP', 'PP', 'PP']
+    num_agents: 4
+    target_position: 4

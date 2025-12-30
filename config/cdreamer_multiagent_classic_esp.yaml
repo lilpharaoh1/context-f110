@@ -1,16 +1,16 @@
-test_name: "cobdreamer_multiagent_nonstationary"
+test_name: "cdreamer_multiagent_classic_esp"
 
 # num_agents: 1
 # target_position: 1
 
-architecture: "cobDreamer"
+architecture: "cDreamer"
 window_in: 2
 window_out: 1
 
 map_mode: "Std"
 
 start_n: 0
-n: 3
+n: 5
 set_n: 1
 
 random_seed: 10000
@@ -33,9 +33,9 @@ runs:
   - adversaries: ['PP']
     num_agents: 2
     target_position: 2
-  # - adversaries: ['PP', 'PP', 'PP']
-  #   num_agents: 4
-  #   target_position: 4
+  - adversaries: ['PP', 'PP', 'PP']
+    num_agents: 4
+    target_position: 4
 
 
 

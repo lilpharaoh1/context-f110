@@ -31,8 +31,8 @@ import cv2
 
 # settings
 SHOW_TRAIN = False
-# SHOW_TEST = False
-SHOW_TEST = True
+SHOW_TEST = False
+# SHOW_TEST = True
 VERBOSE = True
 LOGGING = True
 GRID_X_COEFF = 2.0
@@ -166,8 +166,8 @@ class TestSimulation():
             ma_runlist = np.stack([speed_grid.ravel(), la_grid.ravel()], axis=1)
 
         for ma_idx, ma_info in enumerate(ma_runlist):
-            if ma_idx < 31:
-                continue
+            # if ma_idx < 11:
+            #     continue
             print(f"Architecture {run.architecture} / Num_Agents {run.num_agents} / Adversary {run.adversaries[0]} / Set_n {run.n} / RunConfig {ma_idx} ")
             self.adv_planners = [select_agent(run, self.conf, architecture, train=False, init=False, ma_info=ma_info) for architecture in run.adversaries]
             self.vehicle_state_history = [VehicleStateHistory(run, f"Testing/Testing_{ma_idx}/agent_{agent_id}") for agent_id in range(self.num_agents)]
@@ -412,14 +412,29 @@ class TestSimulation():
                     observation['colision_done'] = True
 
 
-                if self.prev_obs is None: observation['progress'] = 0
-                elif self.prev_obs[agent_id]['lap_done'] == True: observation['progress'] = 0
-                else: observation['progress'] = max(self.std_track.calculate_progress_percent(agent_id), self.prev_obs[agent_id]['progress'])
+                # if self.prev_obs is None: observation['progress'] = 0.0
+                # elif self.prev_obs[agent_id]['lap_done'] == True: observation['progress'] = 0
+                # else: observation['progress'] = max(self.std_track.calculate_progress_percent(agent_id), self.prev_obs[agent_id]['progress'])
+                # # self.racing_race_track.plot_vehicle(state[0:2], state[2])
+                # # taking the max progress
+
+                if self.prev_obs is None: 
+                    observation['progress'] = 0.0
+                else:
+                    prog = self.std_track.calculate_progress_percent(agent_id)
+                    if prog < 0.05 and self.prev_obs[agent_id]['progress'] > 0.95:
+                        self.prev_obs[agent_id]['lap_done'] = True
+                    if self.prev_obs[agent_id]['lap_done'] == True: 
+                        observation['progress'] = max(prog + 1.0, self.prev_obs[agent_id]['progress'])
+                    else: 
+                        observation['progress'] = max(prog, self.prev_obs[agent_id]['progress']) 
                 # self.racing_race_track.plot_vehicle(state[0:2], state[2])
                 # taking the max progress
                 
-
             if obs['lap_counts'][agent_id] == 1:
+                observation['lap_done'] = True
+            
+            if not self.prev_obs is None and self.prev_obs[agent_id]['lap_done']:
                 observation['lap_done'] = True
 
             if self.reward and agent_id == 0: # ie. if target_planner
@@ -434,13 +449,24 @@ class TestSimulation():
             # Append agent_observation to total observations
             observations.append(observation)
         
+        # print("----------------------------------------")
+        # for agent_id in range(self.num_agents):
+        #     print(f"{agent_id}: {observations[agent_id]['lap_done']}: {observations[agent_id]['progress']}")
+
         # Set the position values for each agent
         observations = self.score_positions(observations)
 
         for agent_id in range(self.num_agents):
             observations[agent_id]['overtaking'] = self.prev_obs[agent_id]['position'] - observations[agent_id]['position'] \
-                                                        if not self.prev_obs is None else 0
+                                                        if not self.prev_obs is None \
+                                                        and self.prev_obs[0]['current_laptime'] > 0.01 \
+                                                        else 0
             observations[agent_id]['reward'] += observations[agent_id]['overtaking']
+
+
+        # if observations[0]['overtaking'] != 0:
+        #     print(self.prev_obs[0]['current_laptime'], self.prev_obs[0]['progress'], observations[0]['current_laptime'], observations[0]['progress'], observations[0]['overtaking'])
+        #     print(self.prev_obs[1]['current_laptime'], self.prev_obs[1]['progress'], observations[1]['current_laptime'], observations[1]['progress'], observations[1]['overtaking'])
 
 
         # if self.vehicle_state_history:
@@ -450,7 +476,7 @@ class TestSimulation():
         return observations
 
     def score_positions(self, observations):
-        scores = self.std_track.s
+        scores = [observations[agent_idx]['progress'] for agent_idx in range(self.num_agents)] #  self.std_track.s
         sorted_scores = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)
 
         for rank, agent_id in enumerate(sorted_scores):
@@ -459,7 +485,15 @@ class TestSimulation():
         return observations
 
     def calc_offsets(self, num_adv):
-        x_offset = np.arange(1, num_adv+1) * 5.5
+
+        if self.map_name == "f1_esp":
+            x_offset = np.arange(1, num_adv+1) * 5.5 # esp
+        elif self.map_name == "f1_gbr":
+            x_offset = np.arange(1, num_adv+1) * 4.0 # gbr
+        elif self.map_name == "f1_mco":
+            x_offset = np.arange(1, num_adv+1) * 3.0 # mco
+        else:
+            raise "Map name not known..."
         y_offset = np.zeros(num_adv)
         # y_offset[::2] = np.ones(ceil(num_adv/2)) * 0.6
         offset = np.concatenate((x_offset.reshape(1, -1), y_offset.reshape(1, -1), np.zeros((1, num_adv))), axis=0).T
@@ -547,7 +581,7 @@ def main():
     # sim.run_testing_evaluation()
 
 
-    run_file = "dreamerv3_multiagent_classic"
+    run_file = "sac_multiagent_classic_mco"
     sim = TestSimulation(run_file)
     sim.run_testing_evaluation()
 

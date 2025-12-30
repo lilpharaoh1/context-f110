@@ -27,7 +27,7 @@ from TrajectoryAidedLearning.DataTools.plotting_utils import *
 # SAVE_PDF = False
 SAVE_PDF = True
 
-RUN_FOLDER = 9
+RUN_FOLDER = 3
 
 CMAP_SIZE = {
     "f1_esp" : 0.35,
@@ -37,7 +37,7 @@ CMAP_SIZE = {
 }
 
 cmaps = ['Blues', 'Greens', 'Oranges']
-
+colors = ['coral', 'mediumseagreen', 'royalblue']
 
 def ensure_path_exists(folder):
     if not os.path.exists(folder):
@@ -64,7 +64,7 @@ class AnalyseTestLapData:
         path = "Data/Vehicles/" + run_file + "/"
 
         vehicle_folders = glob.glob(f"{path}*/")
-        # print(vehicle_folders)
+        print(vehicle_folders)
         vehicle_folder = vehicle_folders[RUN_FOLDER]
         self.num_agents = self.run_data[RUN_FOLDER].num_agents
         self.n_test_laps = self.run_data[RUN_FOLDER].n_test_laps
@@ -166,9 +166,10 @@ class AnalyseTestLapData:
             segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
             norm = plt.Normalize(0, 5)
-            lc = LineCollection(segments, cmap=cmaps[i], norm=norm)
+            # lc = LineCollection(segments, cmap=cmaps[i], norm=norm)
+            lc = LineCollection(segments, alpha=0.7, color=colors[i], norm=norm)
             lc.set_array(vs)
-            lc.set_linewidth(0.5)
+            lc.set_linewidth(2.4)
             line = plt.gca().add_collection(lc)
             plt.gca().set_aspect('equal', adjustable='box')
 
@@ -190,8 +191,8 @@ def whole_limits(map_name):
 def highlight1_limits(map_name):
     if map_name == "f1_esp":
         # ESP Start
-        plt.xlim(625, 1485)
-        plt.ylim(50, 520)
+        plt.xlim(1150, 1400)
+        plt.ylim(200, 425)
     elif map_name == "f1_aut":
         plt.xlim(20, 1500)
         plt.ylim(50, 520)

@@ -148,7 +148,9 @@ def setup_run_list(run_file):
             set_n = run['set_n']
             max_speed = run['max_speed']
             run["n"] = rep
+            
             run["start_train_steps"] = run["start_train_steps"] if "start_train_steps" in run else 0
+            run["start_poses"] = run["start_poses"] if "start_poses" in run else "ordered"
 
             # Handcrafted Agents
             if run['architecture'] == "PP":

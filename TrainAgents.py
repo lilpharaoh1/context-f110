@@ -96,6 +96,7 @@ class TrainSimulation(TestSimulation):
             self.num_agents = run.num_agents
             self.target_position = run.target_position
             self.start_train_steps = run.start_train_steps
+            self.start_poses = run.start_poses
             self.n_train_steps = run.n_train_steps
             assert self.num_agents == len(run.adversaries) + 1, "Number of agents != number of adversaries + 1"
 

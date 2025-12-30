@@ -129,6 +129,7 @@ class TestSimulation():
             self.map_name = run.map_name
             self.num_agents = run.num_agents
             self.target_position = run.target_position
+            self.start_poses = "ordered" # run.start_poses # Always be ordered for test laps
 
             self.std_track = StdTrack(run.map_name, num_agents=run.num_agents)
             self.reward = select_reward_function(run, self.conf, self.std_track)
@@ -421,7 +422,7 @@ class TestSimulation():
                 if self.prev_obs is None: 
                     observation['progress'] = 0.0
                 else:
-                    prog = self.std_track.calculate_progress_percent(agent_id)
+                    prog = self.std_track.get_progress_percent(agent_id)
                     if prog < 0.05 and self.prev_obs[agent_id]['progress'] > 0.95:
                         self.prev_obs[agent_id]['lap_done'] = True
                     if self.prev_obs[agent_id]['lap_done'] == True: 
@@ -502,19 +503,40 @@ class TestSimulation():
 
     def reset_simulation(self):
         reset_pose = np.zeros((self.num_agents, 3))
-        # if self.num_agents > 1:
-        #     reset_pose[:, 1] -= GRID_Y_COEFF/2
+        if self.num_agents > 1:
+            percentage_step = 0.05  
+            if self.start_poses == "ordered":
+                num_adv = self.num_agents - 1
+                adv_back = self.num_agents - self.target_position
+                adv_front = num_adv - adv_back
+                percentage_starts = [0.0] + [percentage_step*i for i in range(1, adv_front+1)] + [1 - percentage_step*(i+1) for i in range(adv_back)]
+            elif self.start_poses == "random":
+                percentage_starts = []
+                while len(percentage_starts) < self.num_agents:
+                    candidate = np.random.uniform(0.0, 1.0)
+                    if all(abs(candidate - x) >= percentage_step for x in percentage_starts):
+                        percentage_starts.append(candidate)
+            else:
+                raise f"start_poses {self.start_poses} is set wrong."
+            idx_starts = [int(start * len(self.std_track.wpts)) for start in percentage_starts]
+            wpt_starts = [self.std_track.wpts[start] for start in idx_starts]
+            reset_pose = np.array([
+                [x, y, self.std_track.get_cross_track_heading([x, y])[0]]
+                for x, y in wpt_starts
+            ])
 
-        num_adv = self.num_agents - 1
-        adv_back = self.num_agents - self.target_position
-        adv_front = num_adv - adv_back
+        # print(percentage_starts)
+        # print(idx_starts)
+        # print(wpt_starts)
+        # print(reset_pose)
+        # exit()
 
-        front_offset = self.calc_offsets(adv_front)
-        back_offset = np.flip(self.calc_offsets(adv_back), axis=0)
-        back_offset[:, 0] *= -1
+        # front_offset = self.calc_offsets(adv_front)
+        # back_offset = np.flip(self.calc_offsets(adv_back), axis=0)
+        # back_offset[:, 0] *= -1
 
-        offset = np.concatenate((np.zeros((1, 3)), front_offset, back_offset), axis=0)        
-        reset_pose += offset
+        # offset = np.concatenate((np.zeros((1, 3)), front_offset, back_offset), axis=0)        
+        # reset_pose += offset
 
         obs, step_reward, done, _ = self.env.reset(reset_pose)
 

@@ -93,10 +93,6 @@ class StdTrack:
         # if self.s[agent_id] < self.total_s * 0.05 and self.max_distance[agent_id] > self.total_s * 0.95:
         #     self.s[agent_id] += self.total_s # add one lap 
 
-
-    def calculate_progress_percent(self, agent_id):
-        return self.s[agent_id]/self.total_s
-
     def interp_pts(self, idx, dists):
         """
         
@@ -123,6 +119,9 @@ class StdTrack:
             x = (d1**2 - h**2)**0.5
 
         return x, h
+
+    def get_progress_percent(self, agent_id):
+        return self.s[agent_id]/self.total_s
 
     def get_trackline_segment(self, point):
         """Returns the first index representing the line segment that is closest to the point.

@@ -9,7 +9,7 @@ window_out: 1
 
 map_mode: "Std"
 
-start_n: 4
+start_n: 0
 n: 5
 set_n: 1
 

@@ -44,13 +44,13 @@ class AnalyseTestLapData:
                     self.plot_succ_mat(indv_succ, save_path=f'{folder}a2a_{idx}')
                 except:
                     print(f"NOTE -> not counting folder {folder}")
-            self.plot_succ_mat(np.mean(run_succ, axis=0).reshape(1, 7, 7), save_path=f'{run_names[run_num]}a2a')
-            iid = np.mean(run_succ, axis=0).reshape(1, 7, 7)[in_dist]
-            ood = np.mean(run_succ, axis=0).reshape(1, 7, 7)[~in_dist]
-
-            print(f"In-distribution: {np.mean(iid)} +- {np.std(iid)}")
-            print(f"Out-of-distribution: {np.mean(ood)} +- {np.std(ood)}")
-
+            self.plot_succ_mat(np.nanmean(run_succ, axis=0).reshape(1, 7, 7), save_path=f'{run_names[run_num]}a2a')
+            iid = np.nanmean(run_succ, axis=0).reshape(1, 7, 7)[in_dist]
+            ood = np.nanmean(run_succ, axis=0).reshape(1, 7, 7)[~in_dist]
+            
+            print(f"In-distribution: {np.nanmean(iid)} +- {np.nanstd(iid)} ({np.nanmean(iid) / np.nanstd(iid)})")
+            print(f"Out-of-distribution: {np.nanmean(ood)} +- {np.nanstd(ood)} ({np.nanmean(ood) / np.nanstd(ood)})")
+            print(f"CVs: {np.nanmean(run_succ) / np.nanstd(run_succ)}")
 
     def plot_succ_mat(self, data, save_path=None):
         # Reshape data

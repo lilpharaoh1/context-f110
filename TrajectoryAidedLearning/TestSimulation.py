@@ -166,8 +166,8 @@ class TestSimulation():
             ma_runlist = np.stack([speed_grid.ravel(), la_grid.ravel()], axis=1)
 
         for ma_idx, ma_info in enumerate(ma_runlist):
-            if ma_idx < 17:
-                continue
+            # if ma_idx < 11:
+            #     continue
             print(f"Architecture {run.architecture} / Num_Agents {run.num_agents} / Adversary {run.adversaries[0]} / Set_n {run.n} / RunConfig {ma_idx} ")
             self.adv_planners = [select_agent(run, self.conf, architecture, train=False, init=False, ma_info=ma_info) for architecture in run.adversaries]
             self.vehicle_state_history = [VehicleStateHistory(run, f"Testing/Testing_{ma_idx}/agent_{agent_id}") for agent_id in range(self.num_agents)]
@@ -485,9 +485,14 @@ class TestSimulation():
 
     def calc_offsets(self, num_adv):
 
-        x_offset = np.arange(1, num_adv+1) * 5.5 # esp
-        # x_offset = np.arange(1, num_adv+1) * 4.0 # gbr
-        # x_offset = np.arange(1, num_adv+1) * 3.0 # mco
+        if self.map_name == "f1_esp":
+            x_offset = np.arange(1, num_adv+1) * 5.5 # esp
+        elif self.map_name == "f1_gbr":
+            x_offset = np.arange(1, num_adv+1) * 4.0 # gbr
+        elif self.map_name == "f1_mco":
+            x_offset = np.arange(1, num_adv+1) * 3.0 # mco
+        else:
+            raise "Map name not known..."
         y_offset = np.zeros(num_adv)
         # y_offset[::2] = np.ones(ceil(num_adv/2)) * 0.6
         offset = np.concatenate((x_offset.reshape(1, -1), y_offset.reshape(1, -1), np.zeros((1, num_adv))), axis=0).T
@@ -575,7 +580,7 @@ def main():
     # sim.run_testing_evaluation()
 
 
-    run_file = "dreamerv3_multiagent_classic_esp"
+    run_file = "sac_multiagent_classic_mco"
     sim = TestSimulation(run_file)
     sim.run_testing_evaluation()
 

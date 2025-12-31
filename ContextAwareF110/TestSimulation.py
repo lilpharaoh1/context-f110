@@ -114,19 +114,19 @@ class TestSimulation():
 
     def run_testing(self, run):
         if len(run.adversaries) == 0:
-            ma_runlist = [[0.0, 0.0]]
+            context_runlist = [[0.0, 0.0]]
         else:
             speed_val, steer_val = run.context_info[2:]
             speed_arange, steer_arange = np.round(np.arange(-speed_val, speed_val + 1e-6, 0.1), 2), np.round(np.arange(-steer_val, steer_val + 1e-6, 0.1), 2)
             speed_grid, steer_grid = np.meshgrid(speed_arange, steer_arange, indexing='ij')
-            ma_runlist = np.stack([speed_grid.ravel(), steer_grid.ravel()], axis=1)
+            context_runlist = np.stack([speed_grid.ravel(), steer_grid.ravel()], axis=1)
 
-        for ma_idx, context_info in enumerate(ma_runlist):
-            # if ma_idx < 11:
+        for context_idx, context_info in enumerate(context_runlist):
+            # if context_idx < 11:
             #     continue
-            print(f"Architecture {run.architecture} / Num_Agents {run.num_agents} / Adversary {run.adversaries[0]} / Set_n {run.n} / RunConfig {ma_idx} ")
+            print(f"Architecture {run.architecture} / Num_Agents {run.num_agents} / Adversary {run.adversaries[0]} / Set_n {run.n} / RunConfig {context_idx} ")
             self.adv_planners = [select_agent(run, self.conf, architecture, train=False, init=False, context_info=context_info) for architecture in run.adversaries]
-            self.vehicle_state_history = [VehicleStateHistory(run, f"Testing/Testing_{ma_idx}/agent_{agent_id}") for agent_id in range(self.num_agents)]
+            self.vehicle_state_history = [VehicleStateHistory(run, f"Testing/Testing_{context_idx}/agent_{agent_id}") for agent_id in range(self.num_agents)]
             assert self.env != None, "No environment created"
             start_time = time.time()
 
@@ -284,7 +284,7 @@ class TestSimulation():
             run_dict = vars(run)
             run_dict.update(eval_dict)
 
-            save_conf_dict(run_dict, f"RunConfig_{ma_idx}")
+            save_conf_dict(run_dict, f"RunConfig_{context_idx}")
 
             self.lap_times = []
             self.places = []

@@ -22,15 +22,22 @@ max_laptime: 240
 # General adversary parameters 
 slow_down: 0.80
 
-# PurePursuit planner values
+# PurePursuit planner parameters
 lookahead: 1.5
 v_gain: 0.9
 v_min_plan: 1            # minimum speed for selecting a steering angle to prevent instability
 
+# FollowTheGap planner parameters
+bubble_radius: 16
+preprocess_conv_size: 16 
+best_point_conv_size: 24 
+straight_speed: 5.0
+corner_speed: 4.0 
+
+# Reward paremetrs
 r_velocity: 1
 r_distance: 0.5
 constant_reward: 1
-
 r_time: 0.05
 
 #save_paths

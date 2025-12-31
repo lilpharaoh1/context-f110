@@ -308,7 +308,7 @@ class PurePursuit:
         self.trajectory = Trajectory(run.map_name, self.raceline)
         self.speed_c, self.steer_c = context_info
 
-        # print("Agent context loaded:", context_info)
+        # print("PurePursuit agent loaded w/ context:", context_info)
        
         if run.map_name == "f1_esp":
             self.lookahead = conf.lookahead * (1 + 0.4*self.steer_c) # esp 

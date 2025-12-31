@@ -11,17 +11,25 @@ class FTG:
     STRAIGHTS_STEERING_ANGLE = np.pi / 18  # 10 degrees
     
     def __init__(self, run, conf, init=False, context_info=[0.0, 0.0]):
-        # used when calculating the angles of the LiDAR data
-        self.radians_per_elem = None
+        # Environment parameters
+        self.radians_per_elem = None # used when calculating the angles of the LiDAR data
         self.n_beams = None
         self.max_steer = conf.max_steer
         self.max_speed = run.max_speed
-        self.straight_speed = self.STRAIGHTS_SPEED # run.max_speed * 0.7
-        self.corner_speed = self.CORNERS_SPEED # self.straight_speed * 0.625
         self.slow_down = conf.slow_down
+
+        # Driving parameters 
+        self.bubble_radius = conf.bubble_radius if hasattr(conf, "bubble_radius") else self.BUBBLE_RADIUS
+        self.preprocess_conv_size = conf.preprocess_conv_size if hasattr(conf, "preprocess_conv_size") else self.PREPROCESS_CONV_SIZE 
+        self.best_point_conv_size = conf.best_point_conv_size if hasattr(conf, "best_point_conv_size") else self.BEST_POINT_CONV_SIZE 
+        self.straight_speed = conf.straight_speed if hasattr(conf, "bubble_straight_speedradius") else self.STRAIGHTS_SPEED
+        self.corner_speed = conf.corner_speed if hasattr(conf, "corner_speed") else self.CORNERS_SPEED 
+        self.straights_speed_angle = self.STRAIGHTS_STEERING_ANGLE # TODO: maybe make this configurable later
+
+        # Context
         self.speed_c, self.steer_c = context_info
         
-        print("context_info :", context_info)
+        # print("FTG agent loaded w/ context:", context_info)
     
     def preprocess_lidar(self, ranges):
         """ Preprocess the LiDAR scan array. Expert implementation includes:
@@ -33,7 +41,7 @@ class FTG:
 	    # we won't use the LiDAR data from directly behind us
         proc_ranges = np.array(ranges[self.n_beams//8:-self.n_beams//8])
         # sets each value to the mean over a given window
-        pre_conv_size = int(self.PREPROCESS_CONV_SIZE * (1 - 2*self.steer_c))
+        pre_conv_size = int(self.preprocess_conv_size * (1 - 2*self.steer_c))
         proc_ranges = np.convolve(proc_ranges, np.ones(pre_conv_size), 'same') / pre_conv_size
         proc_ranges = np.clip(proc_ranges, 0, self.MAX_LIDAR_DIST)
         return proc_ranges
@@ -85,8 +93,8 @@ class FTG:
         closest = proc_ranges.argmin()
 
         #Eliminate all points inside 'bubble' (set them to zero)
-        min_index = closest - self.BUBBLE_RADIUS
-        max_index = closest + self.BUBBLE_RADIUS
+        min_index = closest - self.bubble_radius
+        max_index = closest + self.bubble_radius
         if min_index < 0: min_index = 0
         if max_index >= len(proc_ranges): max_index = len(proc_ranges)-1
         proc_ranges[min_index:max_index] = 0
@@ -100,7 +108,7 @@ class FTG:
         #Publish Drive message
         steering_angle = self.get_angle(best, len(proc_ranges))
         steering_angle = np.clip(steering_angle, -self.max_steer, self.max_steer)
-        if abs(steering_angle) > self.STRAIGHTS_STEERING_ANGLE:
+        if abs(steering_angle) > self.straights_speed_angle:
             speed = self.corner_speed
         else: 
             speed = self.straight_speed

@@ -33,45 +33,6 @@ SHOW_TEST = False
 # SHOW_TEST = True
 VERBOSE = True
 LOGGING = True
-GRID_X_COEFF = 2.0
-GRID_Y_COEFF = 0.6
-
-# # TODO SOOOOOOO hacky fix
-# def select_reward_function(run, conf, std_track):
-#     reward = run.reward
-#     if reward == "Progress":
-#         reward_function = ProgressReward(std_track)
-#     elif reward == "Cth": 
-#         reward_function = CrossTrackHeadReward(std_track, conf)
-#     elif reward == "TAL":
-#         reward_function = TALearningReward(conf, run)
-#     else: raise Exception("Unknown reward function: " + reward)
-        
-#     return reward_function
-
-# # TODO SOOOOOOO hacky fix
-# def select_agent(run, conf, architecture, train=True, init=False, context_info=[0.0, 0.0]):
-#     agent_type = architecture if architecture is not None else "TD3"
-#     if agent_type == "PP":
-#         agent = PurePursuit(run, conf, init=init, context_info=context_info) 
-#     elif agent_type == "DispExt":
-#         agent = DispExt(run, conf, context_info=context_info)
-#     elif agent_type == "TD3":
-#         agent = TD3Trainer(run, conf, init=init) if train else TD3Tester(run, conf)
-#     elif agent_type == "SAC":
-#         agent = SACTrainer(run, conf, init=init) if train else SACTester(run, conf)
-#     elif agent_type == "DreamerV2":
-#         agent = DreamerV2Trainer(run, conf) if train else DreamerV2Tester(run, conf)
-#     elif agent_type == "DreamerV3":
-#         agent = DreamerV3Trainer(run, conf, init=init) if train else DreamerV3Tester(run, conf)
-#     elif agent_type == "cDreamer":
-#         agent = cDreamerTrainer(run, conf, init=init) if train else cDreamerTester(run, conf)
-#     elif agent_type == "cbDreamer":
-#         agent = cbDreamerTrainer(run, conf, init=init) if train else cbDreamerTester(run, conf)
-#     else: raise Exception("Unknown agent type: " + agent_type)
-
-#     return agent
-
 
 class TestSimulation():
     def __init__(self, run_file: str):
@@ -155,10 +116,10 @@ class TestSimulation():
         if len(run.adversaries) == 0:
             ma_runlist = [[0.0, 0.0]]
         else:
-            speed_val, la_val = run.context_info[2:]
-            speed_arange, la_arange = np.round(np.arange(-speed_val, speed_val + 1e-6, 0.1), 2), np.round(np.arange(-speed_val, speed_val + 1e-6, 0.1), 2)
-            speed_grid, la_grid = np.meshgrid(speed_arange, la_arange, indexing='ij')
-            ma_runlist = np.stack([speed_grid.ravel(), la_grid.ravel()], axis=1)
+            speed_val, steer_val = run.context_info[2:]
+            speed_arange, steer_arange = np.round(np.arange(-speed_val, speed_val + 1e-6, 0.1), 2), np.round(np.arange(-steer_val, steer_val + 1e-6, 0.1), 2)
+            speed_grid, steer_grid = np.meshgrid(speed_arange, steer_arange, indexing='ij')
+            ma_runlist = np.stack([speed_grid.ravel(), steer_grid.ravel()], axis=1)
 
         for ma_idx, context_info in enumerate(ma_runlist):
             # if ma_idx < 11:
@@ -179,7 +140,6 @@ class TestSimulation():
             self.a2a_collisions = 0
 
             context = context_info #if len(run.adversaries) > 0 else None
-            # context = [0.0, 0.0] # for cless runs, please delete later
             for i in range(self.n_test_laps):
                 observations = self.reset_simulation()
                 target_obs = observations[0]
@@ -191,15 +151,13 @@ class TestSimulation():
                 # fig, ax = plt.subplots()
                 while not target_obs['colision_done'] and not target_obs['lap_done'] and not target_obs['current_laptime'] > self.conf.max_laptime:
                     self.prev_obs = observations
-                    target_action, extra = self.target_planner.plan(observations[0], context=context)
-                    # target_action, extra = np.array([0.0, 0.0]), None
+                    target_action = self.target_planner.plan(observations[0], context=context)
                     if run.architecture == "cbDreamer":
                         self.vehicle_state_history[0].add_mask(extra)
 
-                    # target_action, recon = np.array([0.0, 0.45]), None
-
+                    # # Plot MBRL reconstruction
                     # ax.clear()
-                    # ax.plot(recon)
+                    # ax.plot(target_action['reconstruction'])
                     # ax.plot(np.zeros((108,)) if self.target_planner.nn_state is None else self.target_planner.nn_state)
                     # ax.set_ylim(0, 1)
 
@@ -210,11 +168,11 @@ class TestSimulation():
                     # frame_list.append(img)
 
                     if len(self.adv_planners) > 0:
-                        adv_actions = np.array([adv.plan(obs) if not obs['colision_done'] else [0.0, 0.0] for (adv, obs) in zip(self.adv_planners, observations[1:])])
+                        adv_actions = np.array([adv.plan(obs)['action'] if not obs['colision_done'] else [0.0, 0.0] for (adv, obs) in zip(self.adv_planners, observations[1:])])
                         # adv_actions = np.array([np.array([0.0, 0.0]) if not obs['colision_done'] else [0.0, 0.0] for (adv, obs) in zip(self.adv_planners, observations[1:])])
-                        actions = np.concatenate((target_action.reshape(1, -1), adv_actions), axis=0)
+                        actions = np.concatenate((target_action['action'].reshape(1, -1), adv_actions), axis=0)
                     else:
-                        actions = target_action.reshape(1, -1)
+                        actions = target_action['action'].reshape(1, -1)
                     
                     step_position = target_obs['position']
                     eps_steps += 1
@@ -226,12 +184,12 @@ class TestSimulation():
 
                     if SHOW_TEST: self.env.render('human_fast')
 
+
+                # # Record MBRL reconstruction
                 # frame_height, frame_width, _ = frame_list[0].shape
                 # out = cv2.VideoWriter(f'recon_{i}.avi', cv2.VideoWriter_fourcc(*'XVID'), 10, (frame_width, frame_height))
-
                 # for frame in frame_list:
                 #     out.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))  # Convert RGB to BGR for OpenCV
-
                 # out.release()
 
 
@@ -390,9 +348,6 @@ class TestSimulation():
 
             observation['reward'] = 0.0
 
-            ## Fixed collisions so shouldn't need this method anymore
-            # if done and obs['lap_counts'][agent_id] == 0:
-                # observation['colision_done'] = True
             if obs['collisions'][agent_id] == 1.:
                 observation['colision_done'] = True
 
@@ -416,6 +371,7 @@ class TestSimulation():
                 if self.prev_obs is None: 
                     observation['progress'] = 0.0
                 else:
+                    # TODO Make this more robust
                     prog = self.std_track.get_progress_percent(agent_id)
                     if prog < 0.05 and self.prev_obs[agent_id]['progress'] > 0.95:
                         self.prev_obs[agent_id]['lap_done'] = True
@@ -479,26 +435,19 @@ class TestSimulation():
         
         return observations
 
-    def calc_offsets(self, num_adv):
-
+    def track_start_offsets(self):
         if self.map_name == "f1_esp":
-            x_offset = np.arange(1, num_adv+1) * 5.5 # esp
+            return 0.05 # esp
         elif self.map_name == "f1_gbr":
-            x_offset = np.arange(1, num_adv+1) * 4.0 # gbr
+            return 0.05 # gbr
         elif self.map_name == "f1_mco":
-            x_offset = np.arange(1, num_adv+1) * 3.0 # mco
-        else:
-            raise "Map name not known..."
-        y_offset = np.zeros(num_adv)
-        # y_offset[::2] = np.ones(ceil(num_adv/2)) * 0.6
-        offset = np.concatenate((x_offset.reshape(1, -1), y_offset.reshape(1, -1), np.zeros((1, num_adv))), axis=0).T
-
-        return offset
+            return 0.05 # mco
+        raise f"Map {self.map_name} start offset has not been set yet..."
 
     def reset_simulation(self):
         reset_pose = np.zeros((self.num_agents, 3))
         if self.num_agents > 1:
-            percentage_step = 0.05  
+            percentage_step = self.track_start_offsets()  
             if self.start_poses == "ordered":
                 num_adv = self.num_agents - 1
                 adv_back = self.num_agents - self.target_position
@@ -518,19 +467,6 @@ class TestSimulation():
                 [x, y, self.std_track.get_cross_track_heading([x, y])[0]]
                 for x, y in wpt_starts
             ])
-
-        # print(percentage_starts)
-        # print(idx_starts)
-        # print(wpt_starts)
-        # print(reset_pose)
-        # exit()
-
-        # front_offset = self.calc_offsets(adv_front)
-        # back_offset = np.flip(self.calc_offsets(adv_back), axis=0)
-        # back_offset[:, 0] *= -1
-
-        # offset = np.concatenate((np.zeros((1, 3)), front_offset, back_offset), axis=0)        
-        # reset_pose += offset
 
         obs, step_reward, done, _ = self.env.reset(reset_pose)
 

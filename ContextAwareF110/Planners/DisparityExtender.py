@@ -111,4 +111,6 @@ class DispExt:
 
         # print('Speed in m/s: {}'.format((speed)))
         # print('Steering angle in degrees: {}'.format((steering_angle/(np.pi/2))*90))
-        return steering_angle, speed
+        return {
+            'action': steering_angle, speed 
+        }

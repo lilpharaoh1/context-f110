@@ -306,18 +306,18 @@ class PurePursuit:
         self.max_speed = run.max_speed
         self.slow_down = 0.80
         self.trajectory = Trajectory(run.map_name, self.raceline)
-        self.speed_c, self.la_c = context_info
+        self.speed_c, self.steer_c = context_info
 
         # print("Agent context loaded:", context_info)
        
         if run.map_name == "f1_esp":
-            self.lookahead = conf.lookahead * (1 + 0.4*self.la_c) # esp 
+            self.lookahead = conf.lookahead * (1 + 0.4*self.steer_c) # esp 
         elif run.map_name == "f1_gbr":
-            self.lookahead = conf.lookahead * (1 + 0.4*self.la_c) # gbr 
+            self.lookahead = conf.lookahead * (1 + 0.4*self.steer_c) # gbr 
         elif run.map_name == "f1_mco":
-            self.lookahead = conf.lookahead * (1 + 0.3*self.la_c) # mco
+            self.lookahead = conf.lookahead * (1 + 0.3*self.steer_c) # mco
         else:
-            raise "map_name not known..."
+            raise f"Could not set lookahead distance because track {run.map_name} is not known..."
         self.v_min_plan = conf.v_min_plan
         self.wheelbase =  conf.l_f + conf.l_r
         self.max_steer = conf.max_steer
@@ -353,7 +353,9 @@ class PurePursuit:
 
         action = np.array([steering_angle, speed])
 
-        return action
+        return {
+            'action': action 
+        }   
 
     def lap_complete(self):
         pass

@@ -55,7 +55,9 @@ class DreamerV2Trainer:
         self.transform.transform_obs(obs) # to ensure correct PP actions
         self.action = self.transform.transform_action(self.nn_act)
 
-        return self.action 
+        return {
+            'action': self.action
+        } 
 
     def add_memory_entry(self, obs):
         if self.nn_state is not None:
@@ -150,7 +152,9 @@ class DreamerV2Tester:
 
         self.action = self.transform.transform_action(nn_action)
 
-        return self.action 
+        return {
+            'action': self.action
+        }    
 
     def lap_complete(self):
         pass

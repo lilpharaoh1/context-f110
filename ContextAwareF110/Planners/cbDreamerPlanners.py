@@ -65,7 +65,9 @@ class cbDreamerTrainer:
         self.transform.transform_obs(obs) # to ensure correct PP actions
         self.action = self.transform.transform_action(self.nn_act)
 
-        return self.action 
+        return {
+            'action': self.action 
+        }
 
     def add_memory_entry(self, obs, done=False):
         if self.nn_state is not None:
@@ -199,7 +201,10 @@ class cbDreamerTester:
         self.action = self.transform.transform_action(self.nn_act)
 
 
-        return self.action, recon.cpu().numpy()
+        return {
+            'action': self.action,
+            'reconstruction': recon.cpu().numpy() # TODO fix this later
+        }   
 
     def lap_complete(self):
         self.nn_state = None

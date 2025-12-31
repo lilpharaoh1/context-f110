@@ -107,35 +107,31 @@ class TrainSimulation(TestSimulation):
         if len(run.adversaries) == 0:
             context_info = [0.0, 0.0]
         else:
-            speed_val, la_val = run.context_info[:2]
-            speed_c, la_c = np.random.uniform(-speed_val, speed_val), np.random.uniform(-la_val, la_val)
-            context_info = [speed_c, la_c] 
+            speed_val, steer_val = run.context_info[:2]
+            speed_c, steer_c = np.random.uniform(-speed_val, speed_val), np.random.uniform(-steer_val, steer_val)
+            context_info = [speed_c, steer_c] 
         self.adv_planners = [select_agent(run, self.conf, architecture, init=False, context_info=context_info) for architecture in run.adversaries] 
 
         context = context_info #if len(run.adversaries) > 0 else None
         for i in range(self.start_train_steps, self.n_train_steps):
             self.prev_obs = observations # used for calculating reward, so only wanst target_obs
             target_action = self.target_planner.plan(target_obs, context=context)
-            # target_action = np.array([0.0, 1.8]) + np.random.normal(scale=np.array([0.025, 0.2]))
-            # target_action = np.array([0.0, 0.0])
-            # print(f"colision_done : {[obs['colision_done'] for obs in observations]}")
+            # target_action['action'] = np.array([0.0, 1.8]) + np.random.normal(scale=np.array([0.025, 0.2]))
+            # target_action['action'] = np.array([0.0, 0.0])
             if len(self.adv_planners) > 0:
-                adv_actions = np.array([adv.plan(obs) if not obs['colision_done'] else [0.0, 0.0] for (adv, obs) in zip(self.adv_planners, observations[1:])])
+                adv_actions = np.array([adv.plan(obs)['action'] if not obs['colision_done'] else [0.0, 0.0] for (adv, obs) in zip(self.adv_planners, observations[1:])])
                 # adv_actions = np.array([np.array([0.0, 1.8]) + np.random.normal(scale=np.array([0.025, 0.2])) if not obs['colision_done'] else [0.0, 0.0] for (adv, obs) in zip(self.adv_planners, observations[1:])])
                 # adv_actions = np.array([np.array([0.0, 0.0]) if not obs['colision_done'] else [0.0, 0.0] for (adv, obs) in zip(self.adv_planners, observations[1:])])
-                actions = np.concatenate((target_action.reshape(1, -1), adv_actions), axis=0)
+                actions = np.concatenate((target_action['action'].reshape(1, -1), adv_actions), axis=0)
             else:
-                actions = target_action.reshape(1, -1)
+                actions = target_action['action'].reshape(1, -1)
             observations = self.run_step(actions)
             target_obs = observations[0]
 
             self.target_planner.t_his.add_overtaking(target_obs['overtaking'])
 
-            before = time.time()
             if lap_counter > 0: # don't train on first lap.
                 self.target_planner.agent.train()
-            after = time.time()
-            # print(f"Time for agent.train():", after - before)
 
             if SHOW_TRAIN: self.env.render('human_fast')
 
@@ -167,9 +163,9 @@ class TrainSimulation(TestSimulation):
                 if len(run.adversaries) == 0:
                     context_info = [0.0, 0.0]
                 else:
-                    speed_val, la_val = run.context_info[:2]
-                    speed_c, la_c = np.random.uniform(-speed_val, speed_val), np.random.uniform(-la_val, la_val)
-                    context_info = [speed_c, la_c] 
+                    speed_val, steer_val = run.context_info[:2]
+                    speed_c, steer_c = np.random.uniform(-speed_val, speed_val), np.random.uniform(-steer_val, steer_val)
+                    context_info = [speed_c, steer_c] 
                 self.adv_planners = [select_agent(run, self.conf, architecture, init=False, context_info=context_info) for architecture in run.adversaries] 
                 context = context_info # if len(run.adversaries) > 0 else None
 

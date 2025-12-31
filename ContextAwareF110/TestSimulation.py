@@ -4,6 +4,7 @@ sys.path.insert(0, os.getcwd()) # hacky fix
 
 from ContextAwareF110.f110_gym.f110_env import F110Env
 from ContextAwareF110.Utils.utils import *
+from ContextAwareF110.Utils.loaders import select_reward_function, select_agent
 
 from ContextAwareF110.Planners.PurePursuit import PurePursuit
 from ContextAwareF110.Planners.DisparityExtender import DispExt
@@ -35,41 +36,41 @@ LOGGING = True
 GRID_X_COEFF = 2.0
 GRID_Y_COEFF = 0.6
 
-# TODO SOOOOOOO hacky fix
-def select_reward_function(run, conf, std_track):
-    reward = run.reward
-    if reward == "Progress":
-        reward_function = ProgressReward(std_track)
-    elif reward == "Cth": 
-        reward_function = CrossTrackHeadReward(std_track, conf)
-    elif reward == "TAL":
-        reward_function = TALearningReward(conf, run)
-    else: raise Exception("Unknown reward function: " + reward)
+# # TODO SOOOOOOO hacky fix
+# def select_reward_function(run, conf, std_track):
+#     reward = run.reward
+#     if reward == "Progress":
+#         reward_function = ProgressReward(std_track)
+#     elif reward == "Cth": 
+#         reward_function = CrossTrackHeadReward(std_track, conf)
+#     elif reward == "TAL":
+#         reward_function = TALearningReward(conf, run)
+#     else: raise Exception("Unknown reward function: " + reward)
         
-    return reward_function
+#     return reward_function
 
-# TODO SOOOOOOO hacky fix
-def select_agent(run, conf, architecture, train=True, init=False, context_info=[0.0, 0.0]):
-    agent_type = architecture if architecture is not None else "TD3"
-    if agent_type == "PP":
-        agent = PurePursuit(run, conf, init=init, context_info=context_info) 
-    elif agent_type == "DispExt":
-        agent = DispExt(run, conf, context_info=context_info)
-    elif agent_type == "TD3":
-        agent = TD3Trainer(run, conf, init=init) if train else TD3Tester(run, conf)
-    elif agent_type == "SAC":
-        agent = SACTrainer(run, conf, init=init) if train else SACTester(run, conf)
-    elif agent_type == "DreamerV2":
-        agent = DreamerV2Trainer(run, conf) if train else DreamerV2Tester(run, conf)
-    elif agent_type == "DreamerV3":
-        agent = DreamerV3Trainer(run, conf, init=init) if train else DreamerV3Tester(run, conf)
-    elif agent_type == "cDreamer":
-        agent = cDreamerTrainer(run, conf, init=init) if train else cDreamerTester(run, conf)
-    elif agent_type == "cbDreamer":
-        agent = cbDreamerTrainer(run, conf, init=init) if train else cbDreamerTester(run, conf)
-    else: raise Exception("Unknown agent type: " + agent_type)
+# # TODO SOOOOOOO hacky fix
+# def select_agent(run, conf, architecture, train=True, init=False, context_info=[0.0, 0.0]):
+#     agent_type = architecture if architecture is not None else "TD3"
+#     if agent_type == "PP":
+#         agent = PurePursuit(run, conf, init=init, context_info=context_info) 
+#     elif agent_type == "DispExt":
+#         agent = DispExt(run, conf, context_info=context_info)
+#     elif agent_type == "TD3":
+#         agent = TD3Trainer(run, conf, init=init) if train else TD3Tester(run, conf)
+#     elif agent_type == "SAC":
+#         agent = SACTrainer(run, conf, init=init) if train else SACTester(run, conf)
+#     elif agent_type == "DreamerV2":
+#         agent = DreamerV2Trainer(run, conf) if train else DreamerV2Tester(run, conf)
+#     elif agent_type == "DreamerV3":
+#         agent = DreamerV3Trainer(run, conf, init=init) if train else DreamerV3Tester(run, conf)
+#     elif agent_type == "cDreamer":
+#         agent = cDreamerTrainer(run, conf, init=init) if train else cDreamerTester(run, conf)
+#     elif agent_type == "cbDreamer":
+#         agent = cbDreamerTrainer(run, conf, init=init) if train else cbDreamerTester(run, conf)
+#     else: raise Exception("Unknown agent type: " + agent_type)
 
-    return agent
+#     return agent
 
 
 class TestSimulation():

@@ -1,8 +1,8 @@
-# MAI Thesis - Emran Yasser Moustafa
+# context-f110
 
-This repo contains the code I used for my MAI thesis project "Model-Based Reinforcement Learning for Multi-Agent Autonomous Racing", supervised by Prof Ivana Dusparic.
+This repo contains a environment for context-aware head-to-head F1Tenth/Roboracer. I adatped this environment from the open source implementation of [this paper](https://ieeexplore.ieee.org/document/10182327). I developed this environment for part of my Master's thesis and [this resulting work](https://arxiv.org/abs/2510.11501), both supervised by Prof Ivana Dusparic at Trinity College Dublin.
 
-As a starting point, I forked the F1Tenth gym environment used in the paper "[High-speed Autonomous Racing using Trajectory-aided Deep Reinforcement Learning](https://ieeexplore.ieee.org/document/10182327)". My implementation built upon this work by including a configurable framework for multi-agent racingg and by implementing the SAC, DreamerV3, cRSSM and cMask algorithms. I also implemented two context-parameterised adversarial agents; the Classic agent and the Disparity Extender agent. For details on these adversaries, the RL algorithms we used and the F1Tenth environment, please refer to my thesis document.  
+Currently, the repo contains an implementation of the [f110_gym](https://par.nsf.gov/biblio/10221872) environment, implementations of MFRL and MBRL algorithms, implementations of context-defined rules-based racing algorithms, as well as training and evaluation scripts for the development of RL and control policies in a context-aware environment.
 
 ![](Data/overtake.gif)
 
@@ -15,28 +15,38 @@ Once this is complete, please create a new conda environment using the ```enviro
 conda env create -f environment.yml
 ```
 
-The conda environment is called ```mai_gym```. The environment can be activated by simply using the following command.
+The conda environment is called ```f110-context```. The environment can be activated by simply using the following command.
 
 ```bash
 conda activate mai_gym
 ```
 
 ## Training & Evaluation
-There are two important files for running experiments. These are ```TrainAgents.py``` and ```ContextAwareF110/TestSimulation.py```. These scripts execute training and evaluation, respectively. Both scripts can be run by simply using the following command.
+There are two important files for running experiments. These are ```TrainAgents.py``` and ```ContextAwareF110/TestSimulation.py```. These scripts execute training and evaluation, respectively. Both scripts are configured using the ```.yaml``` files in the ```config/``` folder. To execute the training or evaluation of a given configuration, run the command below with an appropriate config file (e.x. ```dev```). 
 
 ```python
 ## To run training
-python TrainAgents.py
+python TrainAgents.py -r [CONFIG]
 
 ## To run evaluation
-python ContextAwareF110/TestSimulation.py
+python ContextAwareF110/TestSimulation.py -r [CONFIG]
 ```
 
-Both scripts are configured using the ```.yaml``` files in the ```config/``` folder. To execute the training or evaluation of a given configuration, navigate the bottom of either script and set ```run_file``` to the name of the configuration. Both scripts should be run from the root of the repository. 
+The configuration files specify the trainable and adversarial agent types, the number of training episodes, the number of evaluation episodes, etc. The range of contexts used during training and evaluation is also defined in these scripts using the ```context_info``` tag. The ```context_info``` parameter takes a four-element array in which the first two numbers indicate the magnitude of the range of speed and steering contexts, respectively, and the final two represent the ranges used during evaluation.  
 
-The configuration files specify the trainable and adversarial agent types, the number of training episodes, the number of evaluation episodes, etc. The range of contexts used during training and evaluation is also defined in these scripts.
+## Citation
 
-## Contact
-For questions or concerns, please contact me via email at moustafe@tcd.ie. Thank you!
+If you find this work useful, please consider citing:
+```
+@misc{moustafa2025contextawaremodelbasedreinforcementlearning,
+      title={Context-Aware Model-Based Reinforcement Learning for Autonomous Racing}, 
+      author={Emran Yasser Moustafa and Ivana Dusparic},
+      year={2025},
+      eprint={2510.11501},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2510.11501}, 
+}
+```
 
 

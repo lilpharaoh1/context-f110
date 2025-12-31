@@ -360,8 +360,6 @@ class SAC(object):
         self.critic_target = torch.load('%s/%s_critic_target.pth' % (directory, filename))
         self.scan_buff = None
 
-        print("Agent Loaded")
-
     def try_load(self, load=True, h_size=300, path=None):
         if load:
             try:

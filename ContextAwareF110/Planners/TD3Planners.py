@@ -108,6 +108,8 @@ class TD3Trainer:
         self.t_his.print_update(True)
         self.t_his.save_csv_data()
         self.agent.save(self.path)
+        if self.t_his.new_best:
+            self.agent.save(self.path, best=True)
 
 class TD3Tester:
     def __init__(self, run, conf):
@@ -123,12 +125,15 @@ class TD3Tester:
         self.v_min_plan = conf.v_min_plan
         self.path = conf.vehicle_path + run.path + run.run_name 
 
-        self.actor = torch.load(self.path + '/' + run.run_name + "_actor.pth")
+        # self.actor = torch.load(self.path + '/' + run.run_name + "_actor.pth")
 
         self.transform = FastTransform(run, conf)
         self.window_in = run.window_in
         self.n_beams = conf.n_beams
         self.scan_buffer = np.zeros((self.window_in, self.n_beams))
+
+        self.agent = TD3(self.transform.state_space, self.transform.action_space, run.run_name, max_action=1, window_in=run.window_in, window_out=run.window_out)
+        self.agent.load(self.path, best=True)
 
         print(f"Agent loaded: {run.run_name}")
 
@@ -141,19 +146,22 @@ class TD3Tester:
 
         nn_obs = self.transform.transform_obs(obs)
 
-        if self.scan_buffer.all() ==0: # first reading
-            for i in range(self.window_in):
-                self.scan_buffer[i, :] = nn_obs 
-        else:
-            self.scan_buffer = np.roll(self.scan_buffer, 1, axis=0)
-            self.scan_buffer[0, :] = nn_obs
+        # if self.scan_buffer.all() == 0: # first reading
+        #     for i in range(self.window_in):
+        #         self.scan_buffer[i, :] = nn_obs 
+        # else:
+        #     self.scan_buffer = np.roll(self.scan_buffer, 1, axis=0)
+        #     self.scan_buffer[0, :] = nn_obs
 
-        nn_obs = np.reshape(self.scan_buffer, (self.window_in * self.n_beams))
+        # nn_obs = np.reshape(self.scan_buffer, (self.window_in * self.n_beams))
         nn_obs = torch.FloatTensor(nn_obs.reshape(1, -1))
-        nn_action = self.actor(nn_obs).data.numpy().flatten()
-        self.nn_act = nn_action
+        nn_act = self.agent.act(nn_obs)
 
-        self.action = self.transform.transform_action(nn_action)
+        if np.isnan(nn_act).any():
+            print(f"NAN in act: {n_obs}")
+            raise Exception("Unknown NAN in act")
+
+        self.action = self.transform.transform_action(nn_act)
 
         return {
             'action': self.action 

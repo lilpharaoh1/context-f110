@@ -198,22 +198,29 @@ class TD3(object):
         
         return total_loss
 
-    def save(self, directory="./saves"):
-        filename = self.name
+    def save(self, directory="./saves", best=False):
+        if best:
+            filename = "best_" + self.name
+        else:
+            filename = self.name
 
         torch.save(self.actor, '%s/%s_actor.pth' % (directory, filename))
         torch.save(self.critic, '%s/%s_critic.pth' % (directory, filename))
         torch.save(self.actor_target, '%s/%s_actor_target.pth' % (directory, filename))
         torch.save(self.critic_target, '%s/%s_critic_target.pth' % (directory, filename))
+        self.scan_buff = None
 
-    def load(self, directory="./saves"):
-        filename = self.name
+    def load(self, directory="./saves", best=False):
+        if best:
+            filename = "best_" + self.name
+        else:
+            filename = self.name
+
         self.actor = torch.load('%s/%s_actor.pth' % (directory, filename))
         self.critic = torch.load('%s/%s_critic.pth' % (directory, filename))
         self.actor_target = torch.load('%s/%s_actor_target.pth' % (directory, filename))
         self.critic_target = torch.load('%s/%s_critic_target.pth' % (directory, filename))
-
-        print("Agent Loaded")
+        self.scan_buff = None
 
     def try_load(self, load=True, h_size=300, path=None):
         if load:

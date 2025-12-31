@@ -162,7 +162,7 @@ class SACTester:
             print(f"NAN in act: {n_obs}")
             raise Exception("Unknown NAN in act")
 
-        action = self.transform.transform_action(nn_act)
+        self.action = self.transform.transform_action(nn_act)
 
         return {
             'action': self.action 

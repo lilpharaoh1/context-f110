@@ -15,10 +15,10 @@ Once this is complete, please create a new conda environment using the ```enviro
 conda env create -f environment.yml
 ```
 
-The conda environment is called ```f110-context```. The environment can be activated by simply using the following command.
+The conda environment is called ```f110-gym```. The environment can be activated by simply using the following command.
 
 ```bash
-conda activate f110-context
+conda activate f110-gym
 ```
 
 ## Training & Evaluation

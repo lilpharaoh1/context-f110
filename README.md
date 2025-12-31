@@ -22,14 +22,14 @@ conda activate mai_gym
 ```
 
 ## Training & Evaluation
-There are two important files for running experiments. These are ```TrainAgents.py``` and ```TrajectoryAidedLearning/TestSimulation.py```. These scripts execute training and evaluation, respectively. Both scripts can be run by simply using the following command.
+There are two important files for running experiments. These are ```TrainAgents.py``` and ```ContextAwareF110/TestSimulation.py```. These scripts execute training and evaluation, respectively. Both scripts can be run by simply using the following command.
 
 ```python
 ## To run training
 python TrainAgents.py
 
 ## To run evaluation
-python TrajectoryAidedLearning/TestSimulation.py
+python ContextAwareF110/TestSimulation.py
 ```
 
 Both scripts are configured using the ```.yaml``` files in the ```config/``` folder. To execute the training or evaluation of a given configuration, navigate the bottom of either script and set ```run_file``` to the name of the configuration. Both scripts should be run from the root of the repository. 

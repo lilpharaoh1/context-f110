@@ -7,7 +7,7 @@ LONG_DESCRIPTION = 'f110 planning agents for safe autonomous racing'
 # Setting up
 setup(
        # the name must match the folder name 'verysimplemodule'
-        name="TrajectoryAidedLearning", 
+        name="ContextAwareF110", 
         version=VERSION,
         author="Benjamin Evans",
         author_email="<bdevans@sun.ac.za>",

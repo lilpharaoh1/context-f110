@@ -2,31 +2,30 @@ import torch
 import numpy as np
 import time
 
-from TrajectoryAidedLearning.f110_gym.f110_env import F110Env
-from TrajectoryAidedLearning.Utils.utils import *
+from ContextAwareF110.f110_gym.f110_env import F110Env
+from ContextAwareF110.Utils.utils import *
 
-from TrajectoryAidedLearning.Planners.PurePursuit import PurePursuit
-from TrajectoryAidedLearning.Planners.DisparityExtender import DispExt
-from TrajectoryAidedLearning.Planners.TD3Planners import TD3Trainer, TD3Tester
-from TrajectoryAidedLearning.Planners.SACPlanners import SACTrainer, SACTester
-from TrajectoryAidedLearning.Planners.DreamerV2Planners import DreamerV2Trainer, DreamerV2Tester
-from TrajectoryAidedLearning.Planners.DreamerV3Planners import DreamerV3Trainer, DreamerV3Tester
-from TrajectoryAidedLearning.Planners.cDreamerPlanners import cDreamerTrainer, cDreamerTester
-from TrajectoryAidedLearning.Planners.cbDreamerPlanners import cbDreamerTrainer, cbDreamerTester
-from TrajectoryAidedLearning.Planners.cobDreamerPlanners import cobDreamerTrainer, cobDreamerTester
-from TrajectoryAidedLearning.Planners.cfDreamerPlanners import cfDreamerTrainer, cfDreamerTester
+from ContextAwareF110.Planners.PurePursuit import PurePursuit
+from ContextAwareF110.Planners.DisparityExtender import DispExt
+from ContextAwareF110.Planners.TD3Planners import TD3Trainer, TD3Tester
+from ContextAwareF110.Planners.SACPlanners import SACTrainer, SACTester
+from ContextAwareF110.Planners.DreamerV2Planners import DreamerV2Trainer, DreamerV2Tester
+from ContextAwareF110.Planners.DreamerV3Planners import DreamerV3Trainer, DreamerV3Tester
+from ContextAwareF110.Planners.cDreamerPlanners import cDreamerTrainer, cDreamerTester
+from ContextAwareF110.Planners.cbDreamerPlanners import cbDreamerTrainer, cbDreamerTester
+from ContextAwareF110.Planners.cobDreamerPlanners import cobDreamerTrainer, cobDreamerTester
+from ContextAwareF110.Planners.cfDreamerPlanners import cfDreamerTrainer, cfDreamerTester
 
-from TrajectoryAidedLearning.Utils.RewardSignals import *
-from TrajectoryAidedLearning.Utils.StdTrack import StdTrack
+from ContextAwareF110.Utils.RewardSignals import *
+from ContextAwareF110.Utils.StdTrack import StdTrack
 
-from TrajectoryAidedLearning.Utils.HistoryStructs import VehicleStateHistory
-from TrajectoryAidedLearning.TestSimulation import TestSimulation
+from ContextAwareF110.Utils.HistoryStructs import VehicleStateHistory
+from ContextAwareF110.TestSimulation import TestSimulation
 
 # settings
-# SHOW_TRAIN = False
-SHOW_TRAIN = True
+SHOW_TRAIN = False
+# SHOW_TRAIN = True
 VERBOSE = True
-
 NON_TRAINABLE = []
 
 # TODO move to utils
@@ -174,8 +173,11 @@ class TrainSimulation(TestSimulation):
 
             self.target_planner.t_his.add_overtaking(target_obs['overtaking'])
 
+            before = time.time()
             if lap_counter > 0: # don't train on first lap.
                 self.target_planner.agent.train()
+            after = time.time()
+            # print(f"Time for agent.train():", after - before)
 
             if SHOW_TRAIN: self.env.render('human_fast')
 

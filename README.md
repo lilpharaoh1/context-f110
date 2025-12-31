@@ -18,7 +18,7 @@ conda env create -f environment.yml
 The conda environment is called ```f110-context```. The environment can be activated by simply using the following command.
 
 ```bash
-conda activate mai_gym
+conda activate f110-context
 ```
 
 ## Training & Evaluation

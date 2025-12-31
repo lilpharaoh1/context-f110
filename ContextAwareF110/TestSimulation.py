@@ -13,9 +13,6 @@ from ContextAwareF110.Planners.DreamerV2Planners import DreamerV2Trainer, Dreame
 from ContextAwareF110.Planners.DreamerV3Planners import DreamerV3Trainer, DreamerV3Tester
 from ContextAwareF110.Planners.cDreamerPlanners import cDreamerTrainer, cDreamerTester
 from ContextAwareF110.Planners.cbDreamerPlanners import cbDreamerTrainer, cbDreamerTester
-from ContextAwareF110.Planners.cobDreamerPlanners import cobDreamerTrainer, cobDreamerTester
-from ContextAwareF110.Planners.cfDreamerPlanners import cfDreamerTrainer, cfDreamerTester
-
 
 from ContextAwareF110.Utils.RewardSignals import *
 from ContextAwareF110.Utils.StdTrack import StdTrack
@@ -56,6 +53,8 @@ def select_agent(run, conf, architecture, train=True, init=False, ma_info=[0.0, 
     agent_type = architecture if architecture is not None else "TD3"
     if agent_type == "PP":
         agent = PurePursuit(run, conf, init=init, ma_info=ma_info) 
+    elif agent_type == "DispExt":
+        agent = DispExt(run, conf, ma_info=ma_info)
     elif agent_type == "TD3":
         agent = TD3Trainer(run, conf, init=init) if train else TD3Tester(run, conf)
     elif agent_type == "SAC":
@@ -68,12 +67,6 @@ def select_agent(run, conf, architecture, train=True, init=False, ma_info=[0.0, 
         agent = cDreamerTrainer(run, conf, init=init) if train else cDreamerTester(run, conf)
     elif agent_type == "cbDreamer":
         agent = cbDreamerTrainer(run, conf, init=init) if train else cbDreamerTester(run, conf)
-    elif agent_type == "cobDreamer":
-        agent = cobDreamerTrainer(run, conf, init=init) if train else cobDreamerTester(run, conf)
-    elif agent_type == "cfDreamer":
-        agent = cfDreamerTrainer(run, conf, init=init) if train else cfDreamerTester(run, conf)
-    elif agent_type == "DispExt":
-        agent = DispExt(run, conf, ma_info=ma_info)
     else: raise Exception("Unknown agent type: " + agent_type)
 
     return agent

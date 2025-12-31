@@ -36,7 +36,7 @@ LEGEND_LOC = "lower right"
 ARCH_MAP = {
     0: None,
     1: "PP",
-    2: "DispExt",
+    2: "FTG",
     3: "TD3",
     4: "SAC",
     5: "DreamerV2",

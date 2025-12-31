@@ -1,9 +1,9 @@
-test_name: "sac_multiagent_dispext"
+test_name: "clesscbdreamer_multiagent_ftg"
 
 # num_agents: 1
 # target_position: 1
 
-architecture: "SAC"
+architecture: "cbDreamer"
 window_in: 2
 window_out: 1
 
@@ -30,10 +30,10 @@ gamma: 0.85
 context_info: [0.15, 0.15, 0.3, 0.3]
 
 runs:
-  - adversaries: ['DispExt']
+  - adversaries: ['FTG']
     num_agents: 2
     target_position: 2
-  - adversaries: ['DispExt', 'DispExt', 'DispExt']
+  - adversaries: ['FTG', 'FTG', 'FTG']
     num_agents: 4
     target_position: 4
 

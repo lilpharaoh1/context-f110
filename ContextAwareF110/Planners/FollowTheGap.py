@@ -1,6 +1,6 @@
 import numpy as np
 
-class DispExt:    
+class FTG:    
 
     BUBBLE_RADIUS = 16
     PREPROCESS_CONV_SIZE = 16
@@ -18,7 +18,7 @@ class DispExt:
         self.max_speed = run.max_speed
         self.straight_speed = self.STRAIGHTS_SPEED # run.max_speed * 0.7
         self.corner_speed = self.CORNERS_SPEED # self.straight_speed * 0.625
-        self.slow_down = 0.85
+        self.slow_down = conf.slow_down
         self.speed_c, self.steer_c = context_info
         
         print("context_info :", context_info)

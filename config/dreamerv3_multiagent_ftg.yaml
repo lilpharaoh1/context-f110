@@ -1,4 +1,4 @@
-test_name: "dreamerv3_multiagent_dispext"
+test_name: "dreamerv3_multiagent_ftg"
 
 # num_agents: 2
 # target_position: 2
@@ -30,9 +30,9 @@ gamma: 0.85
 context_info: [0.15, 0.15, 0.3, 0.3]
 
 runs:
-  - adversaries: ['DispExt']
+  - adversaries: ['FTG']
     num_agents: 2
     target_position: 2
-  - adversaries: ['DispExt', 'DispExt', 'DispExt']
+  - adversaries: ['FTG', 'FTG', 'FTG']
     num_agents: 4
     target_position: 4

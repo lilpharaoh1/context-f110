@@ -7,7 +7,7 @@ from ContextAwareF110.Utils.utils import *
 from ContextAwareF110.Utils.loaders import select_reward_function, select_agent
 
 from ContextAwareF110.Planners.PurePursuit import PurePursuit
-from ContextAwareF110.Planners.DisparityExtender import DispExt
+from ContextAwareF110.Planners.FollowTheGap import FTG
 from ContextAwareF110.Planners.TD3Planners import TD3Trainer, TD3Tester
 from ContextAwareF110.Planners.SACPlanners import SACTrainer, SACTester
 from ContextAwareF110.Planners.DreamerV2Planners import DreamerV2Trainer, DreamerV2Tester

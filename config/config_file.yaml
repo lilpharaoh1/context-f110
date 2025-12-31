@@ -19,9 +19,11 @@ sim_steps: 10              # Number of simulator steps per planning step
 max_steps: 1000
 max_laptime: 240
 
+# General adversary parameters 
+slow_down: 0.80
+
 # PurePursuit planner values
 lookahead: 1.5
-# lookahead: 0.82
 v_gain: 0.9
 v_min_plan: 1            # minimum speed for selecting a steering angle to prevent instability
 

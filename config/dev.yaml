@@ -32,7 +32,7 @@ context_info: [0.0, 0.0, 0.0, 0.0]
 
 runs:
   - adversaries: ['PP', 'PP', 'PP']
-  # - adversaries: ['DispExt', 'DispExt']
+  # - adversaries: ['FTG', 'FTG']
 
 
 

@@ -1,5 +1,5 @@
 from ContextAwareF110.Planners.PurePursuit import PurePursuit
-from ContextAwareF110.Planners.DisparityExtender import DispExt
+from ContextAwareF110.Planners.FollowTheGap import FTG
 from ContextAwareF110.Planners.TD3Planners import TD3Trainer, TD3Tester
 from ContextAwareF110.Planners.SACPlanners import SACTrainer, SACTester
 from ContextAwareF110.Planners.DreamerV2Planners import DreamerV2Trainer, DreamerV2Tester
@@ -28,8 +28,8 @@ def select_agent(run, conf, architecture, train=True, init=False, context_info=[
     agent_type = architecture if architecture is not None else "TD3"
     if agent_type == "PP":
         agent = PurePursuit(run, conf, init=init, context_info=context_info) 
-    elif agent_type == "DispExt":
-        agent = DispExt(run, conf, context_info=context_info)
+    elif agent_type == "FTG":
+        agent = FTG(run, conf, context_info=context_info)
     elif agent_type == "TD3":
         agent = TD3Trainer(run, conf, init=init) if train else TD3Tester(run, conf)
     elif agent_type == "SAC":

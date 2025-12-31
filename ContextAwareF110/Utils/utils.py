@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 
 ARCH_MAP = {
     "PP": 1,
-    "DispExt": 2,
+    "FTG": 2,
     "TD3": 3,
     "SAC": 4,
     "DreamerV2": 5,
@@ -155,8 +155,8 @@ def setup_run_list(run_file):
             # Handcrafted Agents
             if run['architecture'] == "PP":
                 run['run_name'] = f"{run['architecture']}_PP_{run['map_mode']}_PP_{run['map_name']}_{max_speed}_{set_n}_{rep}"
-            elif run['architecture'] == "DispExt":
-                run['run_name'] = f"{run['architecture']}_DispExt_{run['map_mode']}_DispExt_{run['map_name']}_{max_speed}_{set_n}_{rep}"
+            elif run['architecture'] == "FTG":
+                run['run_name'] = f"{run['architecture']}_FTG_{run['map_mode']}_FTG_{run['map_name']}_{max_speed}_{set_n}_{rep}"
             # RL Agents
             else:
                 run['run_name'] = f"{run['architecture']}_{str_adv(adversaries)}_{str_ma(run['context_info'])}_{run['map_mode']}_{run['reward']}_{run['map_name']}_{max_speed}_{int(run['lr'] * 1e4)}_{int(run['gamma'] * 1e3)}_{rep}"

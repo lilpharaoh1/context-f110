@@ -287,7 +287,7 @@ def get_actuation(pose_theta, lookahead_point, position, lookahead_distance, whe
 
 
 class PurePursuit:
-    def __init__(self, run, conf, init=False, ma_info=[0.0, 0.0]):
+    def __init__(self, run, conf, init=False, context_info=[0.0, 0.0]):
         self.name = run.run_name
         path = os.getcwd() + f"/Data/Vehicles/" + run.path  + self.name
         if init:
@@ -306,9 +306,9 @@ class PurePursuit:
         self.max_speed = run.max_speed
         self.slow_down = 0.80
         self.trajectory = Trajectory(run.map_name, self.raceline)
-        self.speed_c, self.la_c = ma_info
+        self.speed_c, self.la_c = context_info
 
-        # print("Agent context loaded:", ma_info)
+        # print("Agent context loaded:", context_info)
        
         if run.map_name == "f1_esp":
             self.lookahead = conf.lookahead * (1 + 0.4*self.la_c) # esp 

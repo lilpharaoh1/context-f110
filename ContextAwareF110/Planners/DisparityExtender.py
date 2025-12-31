@@ -10,7 +10,7 @@ class DispExt:
     CORNERS_SPEED = 4.0
     STRAIGHTS_STEERING_ANGLE = np.pi / 18  # 10 degrees
     
-    def __init__(self, run, conf, init=False, ma_info=[0.0, 0.0]):
+    def __init__(self, run, conf, init=False, context_info=[0.0, 0.0]):
         # used when calculating the angles of the LiDAR data
         self.radians_per_elem = None
         self.n_beams = None
@@ -19,9 +19,9 @@ class DispExt:
         self.straight_speed = self.STRAIGHTS_SPEED # run.max_speed * 0.7
         self.corner_speed = self.CORNERS_SPEED # self.straight_speed * 0.625
         self.slow_down = 0.85
-        self.speed_c, self.steer_c = ma_info
+        self.speed_c, self.steer_c = context_info
         
-        print("ma_info :", ma_info)
+        print("context_info :", context_info)
     
     def preprocess_lidar(self, ranges):
         """ Preprocess the LiDAR scan array. Expert implementation includes:

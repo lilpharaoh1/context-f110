@@ -40,12 +40,12 @@ def select_reward_function(run, conf, std_track):
     return reward_function
 
 # TODO move to utils
-def select_agent(run, conf, architecture, train=True, init=False, ma_info=[0.0, 0.0]):
+def select_agent(run, conf, architecture, train=True, init=False, context_info=[0.0, 0.0]):
     agent_type = architecture if architecture is not None else "TD3"
     if agent_type == "PP":
-        agent = PurePursuit(run, conf, init=init, ma_info=ma_info) 
+        agent = PurePursuit(run, conf, init=init, context_info=context_info) 
     elif agent_type == "DispExt":
-        agent = DispExt(run, conf, ma_info=ma_info)
+        agent = DispExt(run, conf, context_info=context_info)
     elif agent_type == "TD3":
         agent = TD3Trainer(run, conf, init=init) if train else TD3Tester(run, conf)
     elif agent_type == "SAC":
@@ -141,14 +141,14 @@ class TrainSimulation(TestSimulation):
 
         
         if len(run.adversaries) == 0:
-            ma_info = [0.0, 0.0]
+            context_info = [0.0, 0.0]
         else:
-            speed_val, la_val = run.ma_info[:2]
+            speed_val, la_val = run.context_info[:2]
             speed_c, la_c = np.random.uniform(-speed_val, speed_val), np.random.uniform(-la_val, la_val)
-            ma_info = [speed_c, la_c] 
-        self.adv_planners = [select_agent(run, self.conf, architecture, init=False, ma_info=ma_info) for architecture in run.adversaries] 
+            context_info = [speed_c, la_c] 
+        self.adv_planners = [select_agent(run, self.conf, architecture, init=False, context_info=context_info) for architecture in run.adversaries] 
 
-        context = ma_info #if len(run.adversaries) > 0 else None
+        context = context_info #if len(run.adversaries) > 0 else None
         for i in range(self.start_train_steps, self.n_train_steps):
             self.prev_obs = observations # used for calculating reward, so only wanst target_obs
             target_action = self.target_planner.plan(target_obs, context=context)
@@ -201,13 +201,13 @@ class TrainSimulation(TestSimulation):
 
                 # Reinstatiate adversaries with new context (if necessary)
                 if len(run.adversaries) == 0:
-                    ma_info = [0.0, 0.0]
+                    context_info = [0.0, 0.0]
                 else:
-                    speed_val, la_val = run.ma_info[:2]
+                    speed_val, la_val = run.context_info[:2]
                     speed_c, la_c = np.random.uniform(-speed_val, speed_val), np.random.uniform(-la_val, la_val)
-                    ma_info = [speed_c, la_c] 
-                self.adv_planners = [select_agent(run, self.conf, architecture, init=False, ma_info=ma_info) for architecture in run.adversaries] 
-                context = ma_info # if len(run.adversaries) > 0 else None
+                    context_info = [speed_c, la_c] 
+                self.adv_planners = [select_agent(run, self.conf, architecture, init=False, context_info=context_info) for architecture in run.adversaries] 
+                context = context_info # if len(run.adversaries) > 0 else None
 
         train_time = time.time() - start_time
         print(f"Finished Training: {self.target_planner.name} in {train_time} seconds")

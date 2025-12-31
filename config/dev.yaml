@@ -27,7 +27,7 @@ max_speed: 5
 
 lr: 0.001
 gamma: 0.001
-ma_info: [0.0, 0.0, 0.0, 0.0]
+context_info: [0.0, 0.0, 0.0, 0.0]
 
 
 runs:

@@ -49,12 +49,12 @@ def select_reward_function(run, conf, std_track):
     return reward_function
 
 # TODO SOOOOOOO hacky fix
-def select_agent(run, conf, architecture, train=True, init=False, ma_info=[0.0, 0.0]):
+def select_agent(run, conf, architecture, train=True, init=False, context_info=[0.0, 0.0]):
     agent_type = architecture if architecture is not None else "TD3"
     if agent_type == "PP":
-        agent = PurePursuit(run, conf, init=init, ma_info=ma_info) 
+        agent = PurePursuit(run, conf, init=init, context_info=context_info) 
     elif agent_type == "DispExt":
-        agent = DispExt(run, conf, ma_info=ma_info)
+        agent = DispExt(run, conf, context_info=context_info)
     elif agent_type == "TD3":
         agent = TD3Trainer(run, conf, init=init) if train else TD3Tester(run, conf)
     elif agent_type == "SAC":
@@ -154,16 +154,16 @@ class TestSimulation():
         if len(run.adversaries) == 0:
             ma_runlist = [[0.0, 0.0]]
         else:
-            speed_val, la_val = run.ma_info[2:]
+            speed_val, la_val = run.context_info[2:]
             speed_arange, la_arange = np.round(np.arange(-speed_val, speed_val + 1e-6, 0.1), 2), np.round(np.arange(-speed_val, speed_val + 1e-6, 0.1), 2)
             speed_grid, la_grid = np.meshgrid(speed_arange, la_arange, indexing='ij')
             ma_runlist = np.stack([speed_grid.ravel(), la_grid.ravel()], axis=1)
 
-        for ma_idx, ma_info in enumerate(ma_runlist):
+        for ma_idx, context_info in enumerate(ma_runlist):
             # if ma_idx < 11:
             #     continue
             print(f"Architecture {run.architecture} / Num_Agents {run.num_agents} / Adversary {run.adversaries[0]} / Set_n {run.n} / RunConfig {ma_idx} ")
-            self.adv_planners = [select_agent(run, self.conf, architecture, train=False, init=False, ma_info=ma_info) for architecture in run.adversaries]
+            self.adv_planners = [select_agent(run, self.conf, architecture, train=False, init=False, context_info=context_info) for architecture in run.adversaries]
             self.vehicle_state_history = [VehicleStateHistory(run, f"Testing/Testing_{ma_idx}/agent_{agent_id}") for agent_id in range(self.num_agents)]
             assert self.env != None, "No environment created"
             start_time = time.time()
@@ -177,7 +177,7 @@ class TestSimulation():
             self.completed_laps = 0
             self.a2a_collisions = 0
 
-            context = ma_info #if len(run.adversaries) > 0 else None
+            context = context_info #if len(run.adversaries) > 0 else None
             # context = [0.0, 0.0] # for cless runs, please delete later
             for i in range(self.n_test_laps):
                 observations = self.reset_simulation()

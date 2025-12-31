@@ -27,7 +27,7 @@ max_speed: 6
 
 lr: 0.00003
 gamma: 0.85
-ma_info: [0.15, 0.15, 0.3, 0.3]
+context_info: [0.15, 0.15, 0.3, 0.3]
 
 runs:
   # - adversaries: ['PP']

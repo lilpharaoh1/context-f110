@@ -1,6 +1,8 @@
 import os
 import sys
 sys.path.insert(0, os.getcwd()) # hacky fix
+import argparse
+
 
 from ContextAwareF110.f110_gym.f110_env import F110Env
 from ContextAwareF110.Utils.utils import *
@@ -483,58 +485,11 @@ class TestSimulation():
 
 
 def main():
-    # run_file = "dev"
-    # run_file = "SAC_lr"
-    # run_file = "SAC_gamma"
-    # run_file = "SAC_singleagent"
-    # run_file = "SAC_multiagent_stationary"
-    # run_file = "SAC_multiagent_nonstationary"
-    # run_file = "sac_multiagent_classic"
-    # run_file = "sac_multiagent_dispext"
-    # run_file = "dreamerv3_lr"
-    # run_file = "dreamerv3_singleagent"
-    # run_file = "dreamerv3_multiagent_stationary"
-    # run_file = "dreamerv3_multiagent_nonstationary"
-    # run_file = "dreamerv3_multiagent_classic"
-    # run_file = "dreamerv3_multiagent_dispext"
-    # run_file = "cdreamer_singleagent"
-    # run_file = "cdreamer_multiagent_stationary"
-    # run_file = "cdreamer_multiagent_nonstationary"
-    # run_file = "cdreamer_multiagent_classic"
-    # run_file = "cdreamer_multiagent_dispext"
-    # run_file = "cfdreamer_multiagent_nonstationary"
-    # run_file = "cbdreamer_multiagent_nonstationary"
-    # run_file = "cbdreamer_multiagent_nonstationary2"
-    # run_file = "cbdreamer_multiagent_classic"
-    # run_file = "cbdreamer_multiagent_dispext"
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-r', '--run-file', default='dev', type=str)
+    args = parser.parse_args()
 
-    # run_file = "sac_multiagent_classic_gbr"
-    # sim = TestSimulation(run_file)
-    # sim.run_testing_evaluation()
-
-    # run_file = "dreamerv3_multiagent_dispext"
-    # sim = TestSimulation(run_file)
-    # sim.run_testing_evaluation()
-
-    # run_file = "cdreamer_multiagent_dispext"
-    # sim = TestSimulation(run_file)
-    # sim.run_testing_evaluation()
-
-    # run_file = "clesscbdreamer_multiagent_dispext"
-    # sim = TestSimulation(run_file)
-    # sim.run_testing_evaluation()
-
-    # run_file = "clesscdreamer_multiagent_classic"
-    # sim = TestSimulation(run_file)
-    # sim.run_testing_evaluation()
-
-    # run_file = "clesscdreamer_multiagent_dispext"
-    # sim = TestSimulation(run_file)
-    # sim.run_testing_evaluation()
-
-
-    run_file = "sac_multiagent_classic_mco"
-    sim = TestSimulation(run_file)
+    sim = TestSimulation(args.run_file)
     sim.run_testing_evaluation()
 
 

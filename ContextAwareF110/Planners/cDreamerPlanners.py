@@ -46,7 +46,9 @@ class cDreamerTrainer:
             
         if obs['state'][3] < self.v_min_plan:
             self.action = np.array([0, 7])
-            return self.action
+            return {
+                'action': self.action 
+            } 
 
         if np.isnan(nn_state).any():
             print(f"NAN in state: {nn_state}")
@@ -171,7 +173,10 @@ class cDreamerTester:
         self.nn_context = np.array(context) if not context is None else np.zeros((1, 2))
         if obs['state'][3] < self.v_min_plan:
             self.action = np.array([0, 7])
-            return self.action, np.zeros((108,))
+            return {
+                'action': self.action,
+                'reconstruction': np.zeros((108,))
+            }   
         
         nn_obs = self.transform.transform_obs(obs)
 

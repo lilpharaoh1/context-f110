@@ -334,7 +334,9 @@ class PurePursuit:
         lookahead_point = self.trajectory.get_current_waypoint(position, lookahead)
 
         if state[3] < self.v_min_plan:
-            return np.array([0.0, 4])
+            return {
+                'action': np.array([0.0, 4])
+            }
 
         speed_raceline, steering_angle = get_actuation(theta, lookahead_point, position, self.lookahead, self.wheelbase)
         steering_angle = np.clip(steering_angle, -self.max_steer, self.max_steer)

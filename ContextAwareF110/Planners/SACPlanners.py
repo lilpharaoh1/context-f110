@@ -42,7 +42,9 @@ class SACTrainer:
             
         if obs['state'][3] < self.v_min_plan:
             self.action = np.array([0, 7])
-            return self.action
+            return {
+                'action': self.action 
+            }    
 
         if np.isnan(nn_state).any():
             print(f"NAN in state: {nn_state}")
@@ -138,7 +140,9 @@ class SACTester:
     def plan(self, obs, context=None, **kwargs):
         if obs['state'][3] < self.v_min_plan:
             self.action = np.array([0, 7])
-            return self.action, None
+            return {
+                'action': self.action
+            }
         
         nn_obs = self.transform.transform_obs(obs)
 

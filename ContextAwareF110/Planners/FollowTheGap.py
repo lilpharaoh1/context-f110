@@ -112,5 +112,5 @@ class FTG:
         # print('Speed in m/s: {}'.format((speed)))
         # print('Steering angle in degrees: {}'.format((steering_angle/(np.pi/2))*90))
         return {
-            'action': steering_angle, speed 
+            'action': [steering_angle, speed]
         }
